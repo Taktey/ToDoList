@@ -1,11 +1,11 @@
 package com.example.todolist.util;
 
 import com.example.todolist.dto.TaskDto;
-import com.example.todolist.models.Task;
+import com.example.todolist.models.TaskEntity;
 
 public class TaskMapper {
-    public static Task taskDtoToEntity(TaskDto taskDto) {
-        return new Task(
+    public static TaskEntity taskDtoToEntity(TaskDto taskDto) {
+        return new TaskEntity(
                 null,
                 taskDto.getStartDate(),
                 taskDto.getEndDate(),
@@ -15,7 +15,7 @@ public class TaskMapper {
                 taskDto.getExecutorId());
     }
 
-    public static TaskDto taskEntityToDto(Task task) {
+    public static TaskDto taskEntityToDto(TaskEntity task) {
         return new TaskDto(
                 task.getStartDate(),
                 task.getEndDate(),

@@ -1,13 +1,13 @@
 package com.example.todolist.util;
 
 import com.example.todolist.dto.UserDto;
-import com.example.todolist.models.User;
+import com.example.todolist.models.UserEntity;
 
 import java.time.LocalDate;
 
 public class UserMapper {
-    public static User userDtoToEntity(String userName) {
-        return new User(
+    public static UserEntity userDtoToEntity(String userName) {
+        return new UserEntity(
                 null,
                 userName,
                 LocalDate.now(),
@@ -15,7 +15,7 @@ public class UserMapper {
                 null);
     }
 
-    public static UserDto userEntityToDto(User user) {
+    public static UserDto userEntityToDto(UserEntity user) {
         return null;
     }
 }

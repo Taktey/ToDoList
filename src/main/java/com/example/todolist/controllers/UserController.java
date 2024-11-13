@@ -1,6 +1,6 @@
 package com.example.todolist.controllers;
 
-import com.example.todolist.models.User;
+import com.example.todolist.models.UserEntity;
 import com.example.todolist.service.UserService;
 import com.example.todolist.util.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class UserController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createUser(String userName) {
-        User user = UserMapper.userDtoToEntity(userName);
+        UserEntity user = UserMapper.userDtoToEntity(userName);
         Long id = userService.createUser(user);
         return new ResponseEntity<>("User successfully created, user id = "+id, HttpStatus.OK);
     }

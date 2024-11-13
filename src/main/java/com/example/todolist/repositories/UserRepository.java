@@ -1,4 +1,7 @@
 package com.example.todolist.repositories;
 
-public interface UserRepository {
+import com.example.todolist.models.UserEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
 }

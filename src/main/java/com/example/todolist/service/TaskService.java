@@ -1,7 +1,7 @@
 package com.example.todolist.service;
 
 import com.example.todolist.Exceptions.NoSuchTaskFoundException;
-import com.example.todolist.models.Task;
+import com.example.todolist.models.TaskEntity;
 import com.example.todolist.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,24 +16,24 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    public Task getTaskById(Long taskId) throws NoSuchTaskFoundException {
+    public TaskEntity getTaskById(Long taskId) throws NoSuchTaskFoundException {
         return taskRepository.findByIdAndIsRemovedIsFalse(taskId)
                 .orElseThrow(() -> new NoSuchTaskFoundException(taskNotFoundErrorMessage));
     }
 
     public void reAssignTask(Long taskId, Long userId) throws NoSuchTaskFoundException {
-        Task task = taskRepository.findByIdAndIsRemovedIsFalse(taskId)
+        TaskEntity task = taskRepository.findByIdAndIsRemovedIsFalse(taskId)
                 .orElseThrow(() -> new NoSuchTaskFoundException(taskNotFoundErrorMessage));
         task.setExecutorId(userId);
         taskRepository.save(task);
     }
 
-    public Long createTask(Task task) {
+    public Long createTask(TaskEntity task) {
         return taskRepository.save(task).getId();
     }
 
-    public void updateTask(Long taskId, Task task) throws NoSuchTaskFoundException {
-        Task toBeUpdate = taskRepository.findByIdAndIsRemovedIsFalse(taskId)
+    public void updateTask(Long taskId, TaskEntity task) throws NoSuchTaskFoundException {
+        TaskEntity toBeUpdate = taskRepository.findByIdAndIsRemovedIsFalse(taskId)
                 .orElseThrow(() -> new NoSuchTaskFoundException(taskNotFoundErrorMessage));
         if (task.getDescription() != null) {
             toBeUpdate.setDescription(task.getDescription());
@@ -50,7 +50,7 @@ public class TaskService {
     }
 
     public void deleteTask(Long taskId) throws NoSuchTaskFoundException {
-        Task task = taskRepository.findByIdAndIsRemovedIsFalse(taskId)
+        TaskEntity task = taskRepository.findByIdAndIsRemovedIsFalse(taskId)
                 .orElseThrow(() -> new NoSuchTaskFoundException(taskNotFoundErrorMessage));
         task.setIsRemoved(true);
         taskRepository.save(task);

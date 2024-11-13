@@ -6,22 +6,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "Task")
-public class Task {
+@Table(name = "File")
+public class FileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    LocalDate startDate;
-    LocalDate endDate;
-    String description;
-    String tags;
-    Boolean isRemoved;
-    Long executorId;
+    private Long id;
+    private Long taskId;
+    private String fileName;
+    private Boolean isRemoved;
+
+    public FileEntity(String fileName) {
+        this.fileName = fileName;
+        this.isRemoved = false;
+    }
+
 }

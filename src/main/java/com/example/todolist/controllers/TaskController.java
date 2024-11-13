@@ -3,7 +3,7 @@ package com.example.todolist.controllers;
 
 import com.example.todolist.Exceptions.NoSuchTaskFoundException;
 import com.example.todolist.dto.TaskDto;
-import com.example.todolist.models.Task;
+import com.example.todolist.models.TaskEntity;
 import com.example.todolist.service.TaskService;
 import com.example.todolist.util.TaskMapper;
 import lombok.Data;
@@ -25,7 +25,7 @@ public class TaskController {
 
     @GetMapping("/{taskId}")
     public ResponseEntity<?> getTask(@PathVariable Long taskId) {
-        Task task;
+        TaskEntity task;
         try {
             task = taskService.getTaskById(taskId);
         } catch (NoSuchTaskFoundException e) {
@@ -49,7 +49,7 @@ public class TaskController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createTask(@RequestBody TaskDto taskDto) {
-        Task task = TaskMapper.taskDtoToEntity(taskDto);
+        TaskEntity task = TaskMapper.taskDtoToEntity(taskDto);
         Long id = taskService.createTask(task);
         return new ResponseEntity<>("Task successfully created, id = " + id, HttpStatus.CREATED);
 
