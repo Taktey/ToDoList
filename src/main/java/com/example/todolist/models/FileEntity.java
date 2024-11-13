@@ -11,18 +11,24 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "File")
+@Table(name = "file_entity")
 public class FileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long taskId;
+
+    @ManyToOne
+    @JoinColumn(name = "task_id", nullable = false) // Имя столбца внешнего ключа
+    private TaskEntity task;
+
+    @Column(name = "file_name", nullable = false)
     private String fileName;
+
+    @Column(name = "is_removed")
     private Boolean isRemoved;
 
     public FileEntity(String fileName) {
         this.fileName = fileName;
         this.isRemoved = false;
     }
-
 }

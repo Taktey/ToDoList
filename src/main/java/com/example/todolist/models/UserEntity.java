@@ -6,21 +6,28 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.List;
 
-@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @RequiredArgsConstructor
-@Table(name="user")
+@Entity
+@Table(name = "user_entity")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "created_at")
     private LocalDate createdAt;
+
+    @Column(name = "is_removed")
     private Boolean isRemoved;
-    @OneToMany(mappedBy = "userId", fetch = FetchType.LAZY)
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<TaskEntity> tasks;
 }

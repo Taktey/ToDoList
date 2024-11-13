@@ -2,6 +2,7 @@ package com.example.todolist.controllers;
 
 import com.example.todolist.Exceptions.AlreadyDeletedException;
 import com.example.todolist.Exceptions.NoSuchFileException;
+import com.example.todolist.Exceptions.NoSuchTaskFoundException;
 import com.example.todolist.dto.FileDto;
 import com.example.todolist.service.FileService;
 import lombok.Data;
@@ -61,7 +62,7 @@ public class FileController {
                                              @PathVariable Long taskId){
         try {
             fileService.assignFile(fileId, taskId);
-        } catch (NoSuchFileException e){
+        } catch (NoSuchFileException | NoSuchTaskFoundException e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>("File assigned to task "+taskId, HttpStatus.OK);

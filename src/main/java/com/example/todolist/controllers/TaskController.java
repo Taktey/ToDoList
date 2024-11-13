@@ -2,15 +2,17 @@ package com.example.todolist.controllers;
 
 
 import com.example.todolist.Exceptions.NoSuchTaskFoundException;
+import com.example.todolist.Exceptions.NoSuchUserFoundException;
 import com.example.todolist.dto.TaskDto;
-import com.example.todolist.models.TaskEntity;
 import com.example.todolist.service.TaskService;
-import com.example.todolist.util.TaskMapper;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Set;
 
 @Data
 @RestController
@@ -25,21 +27,21 @@ public class TaskController {
 
     @GetMapping("/{taskId}")
     public ResponseEntity<?> getTask(@PathVariable Long taskId) {
-        TaskEntity task;
+        TaskDto task;
         try {
             task = taskService.getTaskById(taskId);
         } catch (NoSuchTaskFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(TaskMapper.taskEntityToDto(task), HttpStatus.OK);
+        return new ResponseEntity<>(task, HttpStatus.OK);
     }
 
     @PostMapping("/{taskId}/to/{userId}")
-    public ResponseEntity<?> reAssignTask(@PathVariable Long taskId,
+    public ResponseEntity<?> assignTask(@PathVariable Long taskId,
                                           @PathVariable Long userId) {
         try {
-            taskService.reAssignTask(taskId, userId);
-        } catch (NoSuchTaskFoundException e) {
+            taskService.assignTask(taskId, userId);
+        } catch (NoSuchTaskFoundException | NoSuchUserFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(
@@ -49,9 +51,13 @@ public class TaskController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createTask(@RequestBody TaskDto taskDto) {
-        TaskEntity task = TaskMapper.taskDtoToEntity(taskDto);
-        Long id = taskService.createTask(task);
-        return new ResponseEntity<>("Task successfully created, id = " + id, HttpStatus.CREATED);
+        Long taskId;
+        try {
+            taskId = taskService.createTask(taskDto);
+        } catch(NoSuchUserFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>("Task successfully created, id = " + taskId, HttpStatus.CREATED);
 
     }
 
@@ -59,13 +65,28 @@ public class TaskController {
     public ResponseEntity<?> updateTask(@PathVariable Long taskId,
                                         @RequestBody TaskDto taskDto) {
         try {
-            taskService.updateTask(taskId, TaskMapper.taskDtoToEntity(taskDto));
+            taskService.updateTask(taskId, taskDto);
         } catch (NoSuchTaskFoundException e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(
                 "Task with id = "+taskId+" successfully updated.",
                 HttpStatus.OK);
+    }
+    @PutMapping("/addTag/{taskId}") //["string1", "string2", "string3"]
+    public ResponseEntity<?> addTags(@PathVariable Long taskId, @RequestBody List<String> tags){
+        Set<String> tagsAfterAdding;
+        try {
+            tagsAfterAdding = taskService.addTags(taskId, tags);
+        } catch (NoSuchTaskFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>("Теги добавлены, теги задачи:\n"+tagsAfterAdding, HttpStatus.OK);
+    }
+    @PostMapping("/byTags") //?strings=string1,string2,string3
+    public ResponseEntity<?> findByTags(@RequestParam List<String> tags){
+        List<TaskDto> tasks = taskService.getTasksByTags(tags);
+        return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{taskId}")
@@ -78,5 +99,6 @@ public class TaskController {
         return new ResponseEntity<>("Task with id = "+taskId+" successfully removed.",
                 HttpStatus.OK);
     }
+
 
 }
