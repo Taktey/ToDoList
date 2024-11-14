@@ -87,6 +87,6 @@ public class TaskService extends BaseService{
     }
 
     public List<TaskDto> getTasksByTags(List<String> tags) {
-        List<TaskEntity> taskEntityList = taskRepository.find
+        return null; // Доделать
     }
 }
