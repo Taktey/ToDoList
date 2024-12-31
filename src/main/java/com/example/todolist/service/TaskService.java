@@ -9,9 +9,6 @@ import com.example.todolist.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Set;
-
 @Service
 public class TaskService extends BaseService{
     private final TaskRepository taskRepository;
@@ -30,7 +27,6 @@ public class TaskService extends BaseService{
                 task.getStartDate(),
                 task.getEndDate(),
                 task.getDescription(),
-                task.getTags(),
                 task.getUser().getId());
     }
 
@@ -48,7 +44,7 @@ public class TaskService extends BaseService{
                 taskDto.getStartDate(),
                 taskDto.getEndDate(),
                 taskDto.getDescription(),
-                taskDto.getTags(),user);
+                user);
         return taskRepository.save(taskEntity).getId();
     }
 
@@ -64,9 +60,6 @@ public class TaskService extends BaseService{
         if (taskDto.getEndDate() != null) {
             toBeUpdate.setEndDate(taskDto.getEndDate());
         }
-        if (taskDto.getTags() != null) {
-            toBeUpdate.setTags(taskDto.getTags());
-        }
     }
 
     public void deleteTask(Long taskId) throws NoSuchTaskFoundException {
@@ -74,19 +67,5 @@ public class TaskService extends BaseService{
                 .orElseThrow(() -> new NoSuchTaskFoundException(getTaskNotFoundMsg()));
         task.setIsRemoved(true);
         taskRepository.save(task);
-    }
-
-    public Set<String> addTags(Long taskId, List<String> tags) {
-        TaskEntity taskToAddTags = taskRepository.findByIdAndIsRemovedIsFalse(taskId)
-                .orElseThrow(()->new NoSuchTaskFoundException(getTaskNotFoundMsg()));
-        Set<String> tagsAfterAdding = taskToAddTags.getTags();
-        tagsAfterAdding.addAll(tags);
-        taskToAddTags.setTags(tagsAfterAdding);
-        taskRepository.save(taskToAddTags);
-        return tagsAfterAdding;
-    }
-
-    public List<TaskDto> getTasksByTags(List<String> tags) {
-        return null; // Доделать
     }
 }

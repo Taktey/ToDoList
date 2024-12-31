@@ -14,23 +14,7 @@ CREATE TABLE IF NOT EXISTS task_entity
     description VARCHAR(500),
     is_removed  BOOLEAN DEFAULT FALSE,
     user_id     BIGINT,
-    tags VARCHAR(255),
     FOREIGN KEY (user_id) REFERENCES user_entity (id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS tag_entity
-(
-    id   BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    name VARCHAR(100) UNIQUE NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS task_tag
-(
-    task_id BIGINT,
-    tag_id  BIGINT,
-    PRIMARY KEY (task_id, tag_id),
-    FOREIGN KEY (task_id) REFERENCES task_entity (id) ON DELETE CASCADE,
-    FOREIGN KEY (tag_id) REFERENCES tag_entity (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS file_entity
