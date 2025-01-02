@@ -12,10 +12,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskDto {
-    LocalDate startDate;
-    LocalDate endDate;
-    String description;
-    Long userId;
+    private Long id;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String description;
+    private Long userId;
 }
 
 /*{

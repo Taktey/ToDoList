@@ -24,6 +24,7 @@ public class TaskService extends BaseService{
         TaskEntity task = taskRepository.findByIdAndIsRemovedIsFalse(taskId)
                 .orElseThrow(() -> new NoSuchTaskFoundException(getTaskNotFoundMsg()));
         return new TaskDto(
+                task.getId(),
                 task.getStartDate(),
                 task.getEndDate(),
                 task.getDescription(),
@@ -48,8 +49,8 @@ public class TaskService extends BaseService{
         return taskRepository.save(taskEntity).getId();
     }
 
-    public void updateTask(Long taskId, TaskDto taskDto) throws NoSuchTaskFoundException {
-        TaskEntity toBeUpdate = taskRepository.findByIdAndIsRemovedIsFalse(taskId)
+    public void updateTask(TaskDto taskDto) throws NoSuchTaskFoundException {
+        TaskEntity toBeUpdate = taskRepository.findByIdAndIsRemovedIsFalse(taskDto.getId())
                 .orElseThrow(() -> new NoSuchTaskFoundException(getTaskNotFoundMsg()));
         if (taskDto.getDescription() != null) {
             toBeUpdate.setDescription(taskDto.getDescription());

@@ -56,13 +56,12 @@ public class TaskController {
         }
     }
 
-    @PutMapping("/update/{taskId}")
-    public ResponseEntity<?> updateTask(@PathVariable Long taskId,
-                                        @RequestBody TaskDto taskDto) {
+    @PutMapping("/update")
+    public ResponseEntity<?> updateTask(@RequestBody TaskDto taskDto) {
         try {
-            taskService.updateTask(taskId, taskDto);
+            taskService.updateTask(taskDto);
             return new ResponseEntity<>(
-                    "Task with id = "+taskId+" successfully updated.",
+                    "Task with id = "+taskDto.getId()+" successfully updated.",
                     HttpStatus.OK);
         } catch (NoSuchTaskFoundException e){
             return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);

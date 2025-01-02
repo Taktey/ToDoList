@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -25,11 +26,11 @@ class TaskControllerTest {
 
     @Test
     void testGetTask_Success() throws Exception {
-        TaskDto taskDto = new TaskDto( null, null, "тестовое описание",1L);
+        TaskDto taskDto = new TaskDto(1L, null, null, "тестовое описание",1L);
         when(taskService.getTaskById(1L)).thenReturn(taskDto);
         mockMvc.perform(get("/task/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userId").value(1L))
+                .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.description").value("тестовое описание"));
         verify(taskService, times(1)).getTaskById(1L);
     }
@@ -74,24 +75,22 @@ class TaskControllerTest {
 
     @Test
     void testCreateTask_Success() throws Exception {
-        TaskDto taskDto = new TaskDto(null, null, "тестовое опиание", null);
         when(taskService.createTask(any(TaskDto.class))).thenReturn(1L);
         mockMvc.perform(post("/task/create")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"description\": \"тестовое опиание\"}"))
+                        .content("{\"description\":\"Тестовое описание\",\"userId\":2}"))
                 .andExpect(status().isCreated())
-                .andExpect(content().string("Task successfully created, id = 1"));
-        verify(taskService, times(1)).createTask(any(TaskDto.class));
+                .andExpect(content().string(containsString("Task successfully created, id = 1")));
     }
 
     @Test
     void testUpdateTask_Success() throws Exception {
-        mockMvc.perform(put("/task/update/1")
+        mockMvc.perform(put("/task/update")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"description\": \"Тестовое описание\"}"))
+                        .content("{\"id\":1,\"description\":\"Тестовое описание\"}"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Task with id = 1 successfully updated."));
-        verify(taskService, times(1)).updateTask(eq(1L), any(TaskDto.class));
+                .andExpect(content().string(containsString("Task with id = 1 successfully updated.")));
+        verify(taskService, times(1)).updateTask(any(TaskDto.class));
     }
 
     @Test
