@@ -18,7 +18,7 @@ public class FileEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "task_id", nullable = false)
+    @JoinColumn(name = "task_id")
     private TaskEntity task;
 
     @Column(name = "file_name", nullable = false)
@@ -27,7 +27,8 @@ public class FileEntity {
     @Column(name = "is_removed")
     private Boolean isRemoved;
 
-    public FileEntity(String fileName) {
+    public FileEntity(String fileName, TaskEntity task) {
+        this.task = task;
         this.fileName = fileName;
         this.isRemoved = false;
     }

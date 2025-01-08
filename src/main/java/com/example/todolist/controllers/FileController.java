@@ -80,20 +80,23 @@ public class FileController {
     public ResponseEntity<String> uploadFile(@RequestPart("file") MultipartFile file,
                                              @RequestPart("taskId") String taskId) {
         Long fileId;
-        Long taskIdLong = Long.getLong(taskId);
+        Long taskIdLong = Long.valueOf(taskId);
         String fileName;
         if (file.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Файл пустой");
         }
         fileName = file.getOriginalFilename();
         try {
-            String filePath = fileDir + fileName;
+            String filePath = "C://idea/ToDoList/src/main/resources/files/" + fileName;
             file.transferTo(new File(filePath));
             FileDto fileDto = new FileDto(fileName, taskIdLong);
             fileId = fileService.saveFile(fileDto);
             return ResponseEntity.ok("Файл успешно загружен: " + fileName +
                     "\nid= " + fileId);
-        } catch (IOException e) {
+        } catch (NoSuchTaskFoundException e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка при загрузке файла: " + e.getMessage());
         }

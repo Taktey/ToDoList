@@ -44,7 +44,9 @@ public class FileService extends BaseService {
     }
 
     public Long saveFile(FileDto fileDto) {
-        FileEntity fileEntity = new FileEntity(fileDto.getFileName());
+        TaskEntity task = taskRepository.findByIdAndIsRemovedIsFalse(fileDto.getTaskId())
+                .orElseThrow(()->new NoSuchTaskFoundException(getTaskNotFoundMsg()));
+        FileEntity fileEntity = new FileEntity(fileDto.getFileName(), task);
         return fileRepository.save(fileEntity).getId();
     }
 
