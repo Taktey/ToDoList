@@ -1,6 +1,7 @@
 package com.example.todolist.controllers;
 
 import com.example.todolist.Exceptions.NoSuchUserFoundException;
+import com.example.todolist.dto.UserCreateDto;
 import com.example.todolist.dto.UserDto;
 import com.example.todolist.models.UserEntity;
 import com.example.todolist.service.UserService;
@@ -21,8 +22,8 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createUser(String userName) {
-        UserEntity user = UserMapper.userDtoToEntity(userName);
+    public ResponseEntity<?> createUser(@RequestBody UserCreateDto userCreateDto) {
+        UserEntity user = UserMapper.userDtoToEntity(userCreateDto);
         Long id = userService.createUser(user);
         return new ResponseEntity<>("User successfully created, user id = "+id, HttpStatus.OK);
     }
@@ -46,7 +47,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/{userId}")
+    @PostMapping("/restore/{userId}")
     public ResponseEntity<?> restoreUser(@PathVariable Long userId) {
         try {
             userService.restoreById(userId);

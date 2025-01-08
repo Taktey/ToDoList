@@ -11,4 +11,5 @@ public interface FileRepository extends JpaRepository<FileEntity, String> {
 
     Optional<FileEntity> findByIdAndIsRemovedIsFalse(Long fileId);
 
+    Optional<FileEntity> findByIdAndIsRemovedIsTrue(Long fileId);
 }

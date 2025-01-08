@@ -5,7 +5,6 @@ import com.example.todolist.Exceptions.NoSuchFileException;
 import com.example.todolist.Exceptions.NoSuchTaskFoundException;
 import com.example.todolist.dto.FileDto;
 import com.example.todolist.service.FileService;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -20,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 
 
-@Data
 @RestController
 @RequestMapping(value = "/file")
 public class FileController {
@@ -57,16 +55,27 @@ public class FileController {
         return new ResponseEntity<>("File with id " + id + " deleted", HttpStatus.OK);
     }
 
-    @PostMapping("/{fileId}/{taskId}")
-    public ResponseEntity<String> assignFile(@PathVariable Long fileId,
-                                             @PathVariable Long taskId){
+    @PostMapping("/restore/{id}")
+    public ResponseEntity<?> restoreFile(@PathVariable Long id) {
         try {
-            fileService.assignFile(fileId, taskId);
-        } catch (NoSuchFileException | NoSuchTaskFoundException e){
+            fileService.restoreFile(id);
+        } catch (NoSuchFileException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>("File assigned to task "+taskId, HttpStatus.OK);
+        return new ResponseEntity<>("File with id " + id + " restored", HttpStatus.OK);
     }
+
+    @PostMapping("/{fileId}/{taskId}")
+    public ResponseEntity<String> assignFile(@PathVariable Long fileId,
+                                             @PathVariable Long taskId) {
+        try {
+            fileService.assignFile(fileId, taskId);
+        } catch (NoSuchFileException | NoSuchTaskFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>("File assigned to task " + taskId, HttpStatus.OK);
+    }
+
     @PostMapping("/upload/")
     public ResponseEntity<String> uploadFile(@RequestPart("file") MultipartFile file,
                                              @RequestPart("taskId") String taskId) {

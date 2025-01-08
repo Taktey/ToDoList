@@ -2,6 +2,7 @@ package com.example.todolist.controllers;
 
 import com.example.todolist.Exceptions.NoSuchTaskFoundException;
 import com.example.todolist.Exceptions.NoSuchUserFoundException;
+import com.example.todolist.dto.TaskCreateDto;
 import com.example.todolist.dto.TaskDto;
 import com.example.todolist.service.TaskService;
 import org.junit.jupiter.api.Test;
@@ -75,7 +76,7 @@ class TaskControllerTest {
 
     @Test
     void testCreateTask_Success() throws Exception {
-        when(taskService.createTask(any(TaskDto.class))).thenReturn(1L);
+        when(taskService.createTask(any(TaskCreateDto.class))).thenReturn(1L);
         mockMvc.perform(post("/task/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"description\":\"Тестовое описание\",\"userId\":2}"))
@@ -110,4 +111,20 @@ class TaskControllerTest {
         verify(taskService, times(1)).deleteTask(1L);
     }
 
+    @Test
+    void testRestoreTask_Success() throws Exception {
+        mockMvc.perform(put("/task/restore/"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Task with id = 2 successfully restored."));
+        verify(taskService, times(1)).restoreTask(1L);
+    }
+
+    @Test
+    void testRestoreTask_TaskNotFound() throws Exception {
+        doThrow(new NoSuchTaskFoundException("Задача не найдена")).when(taskService).restoreTask(1L);
+        mockMvc.perform(post("/task/restore/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Задача не найдена"));
+        verify(taskService, times(1)).deleteTask(1L);
+    }
 }

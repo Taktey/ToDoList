@@ -2,6 +2,7 @@ package com.example.todolist.service;
 
 import com.example.todolist.Exceptions.NoSuchTaskFoundException;
 import com.example.todolist.Exceptions.NoSuchUserFoundException;
+import com.example.todolist.dto.TaskCreateDto;
 import com.example.todolist.dto.TaskDto;
 import com.example.todolist.models.TaskEntity;
 import com.example.todolist.models.UserEntity;
@@ -35,12 +36,12 @@ public class TaskService extends BaseService{
         taskRepository.save(task);
     }
 
-    public Long createTask(TaskDto taskDto) throws NoSuchUserFoundException{
-        UserEntity user = userService.getUserById(taskDto.getUserId());
+    public Long createTask(TaskCreateDto taskCreateDto) throws NoSuchUserFoundException{
+        UserEntity user = userService.getUserById(taskCreateDto.getUserId());
         TaskEntity taskEntity = new TaskEntity(
-                taskDto.getStartDate(),
-                taskDto.getEndDate(),
-                taskDto.getDescription(),
+                taskCreateDto.getStartDate(),
+                taskCreateDto.getEndDate(),
+                taskCreateDto.getDescription(),
                 user);
         return taskRepository.save(taskEntity).getId();
     }
@@ -57,12 +58,20 @@ public class TaskService extends BaseService{
         if (taskDto.getEndDate() != null) {
             toBeUpdate.setEndDate(taskDto.getEndDate());
         }
+        taskRepository.save(toBeUpdate);
     }
 
     public void deleteTask(Long taskId) throws NoSuchTaskFoundException {
         TaskEntity task = taskRepository.findByIdAndIsRemovedIsFalse(taskId)
                 .orElseThrow(() -> new NoSuchTaskFoundException(getTaskNotFoundMsg()));
         task.setIsRemoved(true);
+        taskRepository.save(task);
+    }
+
+    public void restoreTask(Long taskId) {
+        TaskEntity task = taskRepository.findByIdAndIsRemovedIsTrue(taskId)
+                .orElseThrow(() -> new NoSuchTaskFoundException(getTaskNotFoundMsg()));
+        task.setIsRemoved(false);
         taskRepository.save(task);
     }
 }

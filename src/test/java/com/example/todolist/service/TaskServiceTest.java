@@ -2,6 +2,7 @@ package com.example.todolist.service;
 
 import com.example.todolist.Exceptions.NoSuchTaskFoundException;
 import com.example.todolist.Exceptions.NoSuchUserFoundException;
+import com.example.todolist.dto.TaskCreateDto;
 import com.example.todolist.dto.TaskDto;
 import com.example.todolist.models.TaskEntity;
 import com.example.todolist.models.UserEntity;
@@ -83,7 +84,7 @@ class TaskServiceTest {
 
     @Test
     void createTask_Success() throws NoSuchUserFoundException {
-        TaskDto taskDto = new TaskDto(null, null, null, "New Task", 2L,null);
+        TaskCreateDto taskCreateDto = new TaskCreateDto( null, null, "New Task", 2L);
         UserEntity user = new UserEntity();
         user.setId(2L);
 
@@ -93,7 +94,7 @@ class TaskServiceTest {
         when(userService.getUserById(2L)).thenReturn(user);
         when(taskRepository.save(any(TaskEntity.class))).thenReturn(taskEntity);
 
-        Long taskId = taskService.createTask(taskDto);
+        Long taskId = taskService.createTask(taskCreateDto);
 
         assertEquals(1L, taskId);
         verify(userService, times(1)).getUserById(2L);

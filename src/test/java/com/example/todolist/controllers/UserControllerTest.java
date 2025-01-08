@@ -1,6 +1,7 @@
 package com.example.todolist.controllers;
 
 import com.example.todolist.Exceptions.NoSuchUserFoundException;
+import com.example.todolist.dto.UserCreateDto;
 import com.example.todolist.dto.UserDto;
 import com.example.todolist.models.UserEntity;
 import com.example.todolist.service.UserService;
@@ -41,7 +42,7 @@ class UserControllerTest {
     @Test
     void testGetUser_Success() throws Exception {
         UserDto userDto = new UserDto(1L, "Тестовое имя",null);
-        when(userService.getUserById(1L)).thenReturn(UserMapper.userDtoToEntity(userDto.getName()));
+        when(userService.getUserById(1L)).thenReturn(UserMapper.userDtoToEntity(new UserCreateDto(userDto.getName())));
 
         mockMvc.perform(get("/users/1"))
                 .andExpect(status().isOk())
