@@ -24,7 +24,7 @@ public class UserEntity {
     private LocalDate createdAt;
 
     @Column(name = "is_removed")
-    private Boolean isRemoved;
+    private Boolean isRemoved = false;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude

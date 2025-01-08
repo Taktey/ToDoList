@@ -6,24 +6,24 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskDto {
-    LocalDate startDate;
-    LocalDate endDate;
-    String description;
-    Set<String> tags;
-    Long userId;
+    private Long id;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String description;
+    private Long userId;
+    private List<Long> files;
 }
 
 /*{
         "startDate":"2024-11-01",
         "endDate":"2024-11-15",
         "description":"khvhvhkghgkg",
-        "tags":["tag1","tag2","tag3"],
         "userId":12345
         }*/

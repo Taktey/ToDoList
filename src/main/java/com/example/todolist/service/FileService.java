@@ -23,10 +23,17 @@ public class FileService extends BaseService {
     }
 
     public void softDeleteFile(Long fileId) {
-        FileEntity fileEntity = fileRepository.findByIdAndIsRemovedIsFalse(fileId)
+        FileEntity fileEntity = fileRepository.findByIdAndIsRemovedIsTrue(fileId)
                 .orElseThrow(()->new NoSuchFileException(getFileNotFoundMsg()));
         if(fileEntity.getIsRemoved()){throw new AlreadyDeletedException(getFileAlreadyDeletedMsg());}
         fileEntity.setIsRemoved(true);
+        fileRepository.save(fileEntity);
+    }
+
+    public void restoreFile(Long fileId) {
+        FileEntity fileEntity = fileRepository.findByIdAndIsRemovedIsTrue(fileId)
+                .orElseThrow(()->new NoSuchFileException(getFileNotFoundMsg()));
+        fileEntity.setIsRemoved(false);
         fileRepository.save(fileEntity);
     }
 

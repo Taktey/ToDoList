@@ -23,4 +23,19 @@ public class UserService extends BaseService{
         return userRepository.findByIdAndIsRemovedIsFalse(id)
                 .orElseThrow(()->new NoSuchUserFoundException(getUserNotFoundMsg()));
     }
+
+
+    public void deleteById(Long userId) {
+        UserEntity user = userRepository.findByIdAndIsRemovedIsFalse(userId)
+                .orElseThrow(()->new NoSuchUserFoundException(getUserNotFoundMsg()));
+        user.setIsRemoved(true);
+        userRepository.save(user);
+    }
+
+    public void restoreById(Long userId) {
+        UserEntity user = userRepository.findByIdAndIsRemovedIsTrue(userId)
+                .orElseThrow(()->new NoSuchUserFoundException(getUserNotFoundMsg()));
+        user.setIsRemoved(false);
+        userRepository.save(user);
+    }
 }

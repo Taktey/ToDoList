@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -28,25 +26,6 @@ public class TaskEntity {
     @Column(name = "description")
     private String description;
 
-    public TaskEntity(
-            LocalDate startDate,
-            LocalDate endDate,
-            String description,
-            Set<String> tags,
-            UserEntity user) {
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.description = description;
-        this.tags = tags;
-        this.isRemoved = false;
-        this.user = user;
-    }
-
-    @ElementCollection
-    @CollectionTable(name = "task_tags", joinColumns = @JoinColumn(name = "task_id"))
-    @Column(name = "tag")
-    private Set<String> tags = new HashSet<>();
-
     @Column(name = "is_removed")
     private Boolean isRemoved;
 
@@ -57,4 +36,16 @@ public class TaskEntity {
     @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<FileEntity> files;
+
+    public TaskEntity(
+            LocalDate startDate,
+            LocalDate endDate,
+            String description,
+            UserEntity user) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.description = description;
+        this.isRemoved = false;
+        this.user = user;
+    }
 }
