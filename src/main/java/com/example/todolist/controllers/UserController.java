@@ -46,7 +46,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{userId}")
+    @PostMapping("/{userId}")
     public ResponseEntity<?> restoreUser(@PathVariable Long userId) {
         try {
             userService.restoreById(userId);

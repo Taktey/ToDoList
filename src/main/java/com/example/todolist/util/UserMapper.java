@@ -18,9 +18,10 @@ public class UserMapper {
     }
 
     public static UserDto userEntityToDto(UserEntity user) {
+        if(user.getTasks()==null) return new UserDto(user.getId(), user.getName(),null);
         List<TaskDto> tasks = user.getTasks()
                 .stream().map(TaskMapper::taskEntityToDto)
                 .toList();
-        return new UserDto(user.getName(),tasks);
+        return new UserDto(user.getId(), user.getName(),tasks);
     }
 }

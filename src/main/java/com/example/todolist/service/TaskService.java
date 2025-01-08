@@ -6,6 +6,7 @@ import com.example.todolist.dto.TaskDto;
 import com.example.todolist.models.TaskEntity;
 import com.example.todolist.models.UserEntity;
 import com.example.todolist.repositories.TaskRepository;
+import com.example.todolist.util.TaskMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +24,7 @@ public class TaskService extends BaseService{
     public TaskDto getTaskById(Long taskId) throws NoSuchTaskFoundException {
         TaskEntity task = taskRepository.findByIdAndIsRemovedIsFalse(taskId)
                 .orElseThrow(() -> new NoSuchTaskFoundException(getTaskNotFoundMsg()));
-        return new TaskDto(
-                task.getId(),
-                task.getStartDate(),
-                task.getEndDate(),
-                task.getDescription(),
-                task.getUser().getId());
+        return TaskMapper.taskEntityToDto(task);
     }
 
     public void assignTask(Long taskId, Long userId) throws NoSuchTaskFoundException, NoSuchUserFoundException {

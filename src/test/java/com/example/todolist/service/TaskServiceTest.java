@@ -6,17 +6,18 @@ import com.example.todolist.dto.TaskDto;
 import com.example.todolist.models.TaskEntity;
 import com.example.todolist.models.UserEntity;
 import com.example.todolist.repositories.TaskRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
 
     @Mock
@@ -27,11 +28,6 @@ class TaskServiceTest {
 
     @InjectMocks
     private TaskService taskService;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     void getTaskById_Success() throws NoSuchTaskFoundException {
@@ -87,7 +83,7 @@ class TaskServiceTest {
 
     @Test
     void createTask_Success() throws NoSuchUserFoundException {
-        TaskDto taskDto = new TaskDto(null, null, null, "New Task", 2L);
+        TaskDto taskDto = new TaskDto(null, null, null, "New Task", 2L,null);
         UserEntity user = new UserEntity();
         user.setId(2L);
 
@@ -106,7 +102,7 @@ class TaskServiceTest {
 
     @Test
     void updateTask_Success() throws NoSuchTaskFoundException {
-        TaskDto taskDto = new TaskDto(1L, null, null, "Updated Task", null);
+        TaskDto taskDto = new TaskDto(1L, null, null, "Updated Task", null,null);
 
         TaskEntity task = new TaskEntity();
         when(taskRepository.findByIdAndIsRemovedIsFalse(taskDto.getId())).thenReturn(Optional.of(task));

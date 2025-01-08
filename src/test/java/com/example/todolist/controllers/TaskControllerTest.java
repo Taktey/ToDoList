@@ -26,7 +26,7 @@ class TaskControllerTest {
 
     @Test
     void testGetTask_Success() throws Exception {
-        TaskDto taskDto = new TaskDto(1L, null, null, "тестовое описание",1L);
+        TaskDto taskDto = new TaskDto(1L, null, null, "тестовое описание",1L,null);
         when(taskService.getTaskById(1L)).thenReturn(taskDto);
         mockMvc.perform(get("/task/1"))
                 .andExpect(status().isOk())

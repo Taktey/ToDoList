@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class UserDto {
+    Long id;
     String name;
     List<TaskDto> tasks;
 }

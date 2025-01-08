@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,6 +18,7 @@ public class TaskDto {
     private LocalDate endDate;
     private String description;
     private Long userId;
+    private List<Long> files;
 }
 
 /*{

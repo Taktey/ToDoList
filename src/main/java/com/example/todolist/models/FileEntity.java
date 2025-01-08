@@ -18,7 +18,7 @@ public class FileEntity {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "task_id", nullable = false) // Имя столбца внешнего ключа
+    @JoinColumn(name = "task_id", nullable = false)
     private TaskEntity task;
 
     @Column(name = "file_name", nullable = false)
