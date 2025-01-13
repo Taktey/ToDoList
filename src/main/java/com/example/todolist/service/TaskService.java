@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TaskService extends BaseService{
+public class TaskService extends BaseService {
     private final TaskRepository taskRepository;
     private final UserService userService;
 
@@ -36,8 +36,10 @@ public class TaskService extends BaseService{
         taskRepository.save(task);
     }
 
-    public Long createTask(TaskCreateDto taskCreateDto) throws NoSuchUserFoundException{
+    public Long createTask(TaskCreateDto taskCreateDto) throws NoSuchUserFoundException {
+
         UserEntity user = userService.getUserById(taskCreateDto.getUserId());
+
         TaskEntity taskEntity = new TaskEntity(
                 taskCreateDto.getStartDate(),
                 taskCreateDto.getEndDate(),

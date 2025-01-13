@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,6 +20,7 @@ public class TaskDto {
     private String description;
     private Long userId;
     private List<Long> files;
+    private Set<String> tags;
 }
 
 /*{

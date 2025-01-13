@@ -1,0 +1,37 @@
+package com.example.todolist.service;
+
+import com.example.todolist.Exceptions.NoSuchTagFoundException;
+import com.example.todolist.dto.TaskDto;
+import com.example.todolist.models.TagEntity;
+import com.example.todolist.models.TaskEntity;
+import com.example.todolist.repositories.TagRepository;
+import com.example.todolist.repositories.TaskRepository;
+import com.example.todolist.util.TaskMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class TagService extends BaseService{
+    private final TaskRepository taskRepository;
+    private final TagRepository tagRepository;
+
+    @Autowired
+    public TagService(TaskRepository taskRepository, TagRepository tagRepository) {
+        this.taskRepository = taskRepository;
+        this.tagRepository = tagRepository;
+    }
+
+    public List<TaskDto> getTasksHaveTags(List<String> tags){
+        List<TagEntity> tagEntities = tags.stream()
+                .map(tag->tagRepository.findByName(tag)
+                        .orElseThrow(()-> new NoSuchTagFoundException("Тег "+tag+" не найден!")))
+                .collect(Collectors.toList());
+        List<TaskEntity> taskEntities = tagRepository.findByTagsIn(tagEntities);
+        return taskEntities.stream()
+                .map(TaskMapper::taskEntityToDto).collect(Collectors.toList());
+    }
+
+}

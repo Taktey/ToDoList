@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -30,22 +32,33 @@ public class TaskEntity {
     private Boolean isRemoved;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false) // Имя столбца внешнего ключа
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
     @OneToMany(mappedBy = "task", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<FileEntity> files;
 
+    @ManyToMany
+    @JoinTable(
+            name = "task_tag",
+            joinColumns = @JoinColumn(name = "task_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<TagEntity> tags = new HashSet<>();
+
+
     public TaskEntity(
             LocalDate startDate,
             LocalDate endDate,
             String description,
-            UserEntity user) {
+            UserEntity user,
+            Set<TagEntity> tags) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
         this.isRemoved = false;
         this.user = user;
+        this.tags = tags;
     }
 }
