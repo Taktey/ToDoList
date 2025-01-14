@@ -4,6 +4,7 @@ import com.example.todolist.Exceptions.NoSuchTaskFoundException;
 import com.example.todolist.Exceptions.NoSuchUserFoundException;
 import com.example.todolist.dto.TaskCreateDto;
 import com.example.todolist.dto.TaskDto;
+import com.example.todolist.models.TagEntity;
 import com.example.todolist.models.TaskEntity;
 import com.example.todolist.models.UserEntity;
 import com.example.todolist.repositories.TaskRepository;
@@ -11,15 +12,19 @@ import com.example.todolist.util.TaskMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 @Service
 public class TaskService extends BaseService {
     private final TaskRepository taskRepository;
     private final UserService userService;
+    private final TagService tagService;
 
     @Autowired
-    public TaskService(TaskRepository taskRepository, UserService userService) {
+    public TaskService(TaskRepository taskRepository, UserService userService, TagService tagService) {
         this.taskRepository = taskRepository;
         this.userService = userService;
+        this.tagService = tagService;
     }
 
     public TaskDto getTaskById(Long taskId) throws NoSuchTaskFoundException {
@@ -36,16 +41,17 @@ public class TaskService extends BaseService {
         taskRepository.save(task);
     }
 
-    public Long createTask(TaskCreateDto taskCreateDto) throws NoSuchUserFoundException {
-
+    public TaskDto createTask(TaskCreateDto taskCreateDto) throws NoSuchUserFoundException {
         UserEntity user = userService.getUserById(taskCreateDto.getUserId());
+
+        Set<TagEntity> tags = tagService.getOrCreateTags(taskCreateDto.getTags());
 
         TaskEntity taskEntity = new TaskEntity(
                 taskCreateDto.getStartDate(),
                 taskCreateDto.getEndDate(),
                 taskCreateDto.getDescription(),
-                user);
-        return taskRepository.save(taskEntity).getId();
+                user, tags);
+        return TaskMapper.taskEntityToDto(taskRepository.save(taskEntity));
     }
 
     public void updateTask(TaskDto taskDto) throws NoSuchTaskFoundException {

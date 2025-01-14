@@ -54,8 +54,8 @@ public class TaskController {
     @PostMapping("/create")
     public ResponseEntity<?> createTask(@RequestBody TaskCreateDto taskCreateDto) {
         try {
-            Long taskId = taskService.createTask(taskCreateDto);
-            return new ResponseEntity<>("Task successfully created, id = " + taskId, HttpStatus.CREATED);
+            return new ResponseEntity<>("Task successfully created:\n"
+                    + taskService.createTask(taskCreateDto), HttpStatus.CREATED);
         } catch (NoSuchUserFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
@@ -100,10 +100,9 @@ public class TaskController {
     @GetMapping()
     public ResponseEntity<?> getTasksByTags(@RequestParam List<String> tags) {
         try {
-            List<TaskDto> tasks = tagService.getTasksHaveTags(tags);
-            return new ResponseEntity<>(tasks, HttpStatus.OK);
+            return new ResponseEntity<>(tagService.getTasksHaveTags(tags), HttpStatus.OK);
         } catch (NoSuchTagFoundException e){
-            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -21,6 +21,19 @@ public class TaskDto {
     private Long userId;
     private List<Long> files;
     private Set<String> tags;
+
+    @Override
+    public String toString() {
+        return "{" +
+                "\n id=" + id + ""+
+                ",\n startDate=" + startDate +
+                ",\n endDate=" + endDate +
+                ",\n description='" + description + '\'' +
+                ",\n userId=" + userId +
+                ",\n files=" + files +
+                ",\n tags=" + tags +
+                "\n}";
+    }
 }
 
 /*{

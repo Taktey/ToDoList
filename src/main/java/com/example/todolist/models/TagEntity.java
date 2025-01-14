@@ -23,4 +23,7 @@ public class TagEntity {
     @ManyToMany(mappedBy = "tags")
     private Set<TaskEntity> tasks = new HashSet<>();
 
+    public TagEntity(String tagName) {
+        this.name = tagName;
+    }
 }

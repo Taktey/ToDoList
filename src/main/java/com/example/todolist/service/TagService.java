@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,11 +28,21 @@ public class TagService extends BaseService{
     public List<TaskDto> getTasksHaveTags(List<String> tags){
         List<TagEntity> tagEntities = tags.stream()
                 .map(tag->tagRepository.findByName(tag)
-                        .orElseThrow(()-> new NoSuchTagFoundException("Тег "+tag+" не найден!")))
+                        .orElseThrow(()-> new NoSuchTagFoundException("Тег '"+tag+"' не найден!")))
                 .collect(Collectors.toList());
-        List<TaskEntity> taskEntities = tagRepository.findByTagsIn(tagEntities);
+        List<TaskEntity> taskEntities = tagRepository.findByTagsContainingAll(tagEntities, tagEntities.size());
         return taskEntities.stream()
                 .map(TaskMapper::taskEntityToDto).collect(Collectors.toList());
     }
 
+    public TagEntity saveNewTag(String tagName){
+        return tagRepository.save(new TagEntity(tagName.toLowerCase()));
+    }
+
+    public Set<TagEntity> getOrCreateTags(Set<String> tagNames){
+        return tagNames.stream()
+                .map(tagName -> tagRepository.findByName(tagName)
+                        .orElseGet(() -> saveNewTag(tagName)))
+                .collect(Collectors.toSet());
+        }
 }
