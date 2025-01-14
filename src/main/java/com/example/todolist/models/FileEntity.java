@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "file_entity")
+@Table(name = "file")
 public class FileEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

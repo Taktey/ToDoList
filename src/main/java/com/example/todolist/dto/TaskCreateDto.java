@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,4 +17,5 @@ public class TaskCreateDto {
     private LocalDate endDate;
     private String description;
     private Long userId;
+    private Set<String> tags;
 }
