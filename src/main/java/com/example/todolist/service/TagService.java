@@ -1,6 +1,8 @@
 package com.example.todolist.service;
 
 import com.example.todolist.Exceptions.NoSuchTagFoundException;
+import com.example.todolist.dto.TagCreateDto;
+import com.example.todolist.dto.TagDto;
 import com.example.todolist.dto.TaskDto;
 import com.example.todolist.models.TagEntity;
 import com.example.todolist.models.TaskEntity;
@@ -35,8 +37,11 @@ public class TagService extends BaseService{
                 .map(TaskMapper::taskEntityToDto).collect(Collectors.toList());
     }
 
-    public TagEntity saveNewTag(String tagName){
-        return tagRepository.save(new TagEntity(tagName.toLowerCase()));
+    public TagDto createTag(TagCreateDto tagToCreate){
+        if(!existsByName(tagToCreate.getName())){
+            TagEntity tag = saveNewTag(tagToCreate.getName());
+            return new TagDto(tag.getId(), tag.getName());
+        } else throw new RuntimeException("Тэг '"+tagToCreate.getName().toLowerCase()+"' уже существует");
     }
 
     public Set<TagEntity> getOrCreateTags(Set<String> tagNames){
@@ -44,5 +49,12 @@ public class TagService extends BaseService{
                 .map(tagName -> tagRepository.findByName(tagName)
                         .orElseGet(() -> saveNewTag(tagName)))
                 .collect(Collectors.toSet());
-        }
+    }
+
+    private boolean existsByName(String tagName) {
+        return tagRepository.findByName(tagName.toLowerCase()).isPresent();
+    }
+    private TagEntity saveNewTag(String tagName){
+        return tagRepository.save(new TagEntity(tagName.toLowerCase()));
+    }
 }
