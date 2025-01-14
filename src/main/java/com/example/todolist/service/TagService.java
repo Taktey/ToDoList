@@ -30,7 +30,7 @@ public class TagService extends BaseService{
     public List<TaskDto> getTasksHaveTags(List<String> tags){
         List<TagEntity> tagEntities = tags.stream()
                 .map(tag->tagRepository.findByName(tag)
-                        .orElseThrow(()-> new NoSuchTagFoundException("Тег '"+tag+"' не найден!")))
+                        .orElseThrow(()-> new NoSuchTagFoundException(getTagNotFoundMsg()+tag)))
                 .collect(Collectors.toList());
         List<TaskEntity> taskEntities = tagRepository.findByTagsContainingAll(tagEntities, tagEntities.size());
         return taskEntities.stream()
