@@ -29,13 +29,11 @@ public class TaskController {
 
     @GetMapping("/{taskId}")
     public ResponseEntity<?> getTask(@PathVariable Long taskId) {
-        TaskDto task;
         try {
-            task = taskService.getTaskById(taskId);
+            return new ResponseEntity<>(taskService.getTaskById(taskId), HttpStatus.OK);
         } catch (NoSuchTaskFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(task, HttpStatus.OK);
     }
 
     @PostMapping("/{taskId}/to/{userId}")

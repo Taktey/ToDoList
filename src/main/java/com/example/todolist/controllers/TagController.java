@@ -20,6 +20,11 @@ public class TagController {
         this.taskService = taskService;
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllTags(){
+        return new ResponseEntity<>(tagService.getAllTags(), HttpStatus.OK);
+    }
+
     @PostMapping("/create")
     public ResponseEntity<?> createTag(@RequestBody TagCreateDto tagCreateDto) {
         try {

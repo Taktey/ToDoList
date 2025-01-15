@@ -27,6 +27,12 @@ public class TagService extends BaseService{
         this.tagRepository = tagRepository;
     }
 
+    public List<TagDto> getAllTags() {
+        return tagRepository.findAll().stream()
+                .map(e->new TagDto(e.getId(),e.getName()))
+                .collect(Collectors.toList());
+    }
+
     public List<TaskDto> getTasksHaveTags(List<String> tags){
         List<TagEntity> tagEntities = tags.stream()
                 .map(tag->tagRepository.findByName(tag)
@@ -41,7 +47,7 @@ public class TagService extends BaseService{
         if(!existsByName(tagToCreate.getName())){
             TagEntity tag = saveNewTag(tagToCreate.getName());
             return new TagDto(tag.getId(), tag.getName());
-        } else throw new RuntimeException("Тэг '"+tagToCreate.getName().toLowerCase()+"' уже существует");
+        } else throw new RuntimeException("Тег '"+tagToCreate.getName().toLowerCase()+"' уже существует");
     }
 
     public Set<TagEntity> getOrCreateTags(Set<String> tagNames){
@@ -57,4 +63,6 @@ public class TagService extends BaseService{
     private TagEntity saveNewTag(String tagName){
         return tagRepository.save(new TagEntity(tagName.toLowerCase()));
     }
+
+
 }
