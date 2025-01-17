@@ -22,7 +22,7 @@ public final class UserMapper {
         }
         return userMapper;
     }
-    public static UserEntity userDtoToEntity(UserDTO user) {
+    public UserEntity userDtoToEntity(UserDTO user) {
         return UserEntity.builder()
                 .name(user.getName())
                 .createdAt(LocalDate.now())
@@ -30,7 +30,7 @@ public final class UserMapper {
                 .build();
     }
 
-    public static UserDTO userEntityToDto(UserEntity user) {
+    public UserDTO userEntityToDto(UserEntity user) {
         if (user.getTasks() == null) return new UserDTO(user.getId(), user.getName(), new ArrayList<>());
         List<TaskDTO> tasks = user.getTasks()
                 .stream().map(taskMapper::taskEntityToDto)

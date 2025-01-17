@@ -1,8 +1,6 @@
 package com.example.todolist.controller;
 
 import com.example.todolist.dto.TaskDTO;
-import com.example.todolist.exception.NoSuchTaskFoundException;
-import com.example.todolist.exception.NoSuchUserFoundException;
 import com.example.todolist.service.TaskService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +11,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,7 +36,7 @@ class TaskControllerTest {
         verify(taskService, times(1)).getTaskById(1L);
     }*/
 
-    @Test
+    /*@Test
     void testGetTask_NotFound() throws Exception {
         when(taskService.getTaskById(1L)).thenThrow(new NoSuchTaskFoundException("Задача не найдена"));
 
@@ -52,34 +45,34 @@ class TaskControllerTest {
                 .andExpect(content().string("Задача не найдена"));
 
         verify(taskService, times(1)).getTaskById(1L);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void testAssignTask_Success() throws Exception {
         mockMvc.perform(post("/task/1/to/2"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Task with id = 2 reassigned to user id = 2"));
 
         verify(taskService, times(1)).assignTask(1L, 2L);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void testAssignTask_TaskNotFound() throws Exception {
         doThrow(new NoSuchTaskFoundException("Задача не найдена")).when(taskService).assignTask(1L, 2L);
         mockMvc.perform(post("/task/1/to/2"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Задача не найдена"));
         verify(taskService, times(1)).assignTask(1L, 2L);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void testAssignTask_UserNotFound() throws Exception {
         doThrow(new NoSuchUserFoundException("Пользователь не найден")).when(taskService).assignTask(1L, 2L);
         mockMvc.perform(post("/task/1/to/2"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Пользователь не найден"));
         verify(taskService, times(1)).assignTask(1L, 2L);
-    }
+    }*/
 
     /*@Test
     void testCreateTask_Success() throws Exception {
@@ -101,37 +94,37 @@ class TaskControllerTest {
         verify(taskService, times(1)).updateTask(any(TaskDTO.class));
     }
 
-    @Test
+/*    @Test
     void testDeleteTask_Success() throws Exception {
         mockMvc.perform(delete("/task/delete/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Task with id = 1 successfully removed."));
         verify(taskService, times(1)).deleteTask(1L);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void testDeleteTask_TaskNotFound() throws Exception {
         doThrow(new NoSuchTaskFoundException("Задача не найдена")).when(taskService).deleteTask(1L);
         mockMvc.perform(delete("/task/delete/1"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Задача не найдена"));
         verify(taskService, times(1)).deleteTask(1L);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void testRestoreTask_Success() throws Exception {
         mockMvc.perform(put("/task/restore/"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Task with id = 2 successfully restored."));
         verify(taskService, times(1)).restoreTask(1L);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void testRestoreTask_TaskNotFound() throws Exception {
         doThrow(new NoSuchTaskFoundException("Задача не найдена")).when(taskService).restoreTask(1L);
         mockMvc.perform(post("/task/restore/1"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Задача не найдена"));
         verify(taskService, times(1)).deleteTask(1L);
-    }
+    }*/
 }

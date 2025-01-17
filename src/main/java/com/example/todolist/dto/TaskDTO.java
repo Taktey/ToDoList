@@ -8,21 +8,22 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskDTO {
-    private Long id;
+    private UUID id;
     private LocalDate startDate;
     private LocalDate endDate;
     private String description;
-    private Long userId;
-    private List<Long> files;
+    private UUID userId;
+    private List<UUID> files;
     private Set<String> tags;
 
-    public TaskDTO(LocalDate startDate, LocalDate endDate, String description, Long userId, Set<String> tags) {
+    public TaskDTO(LocalDate startDate, LocalDate endDate, String description, UUID userId, Set<String> tags) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.description = description;
@@ -44,15 +45,15 @@ public class TaskDTO {
     }
 
     public static class Builder {
-        private Long id;
+        private UUID id;
         private LocalDate startDate;
         private LocalDate endDate;
         private String description;
-        private Long userId;
-        private List<Long> fileIds;
+        private UUID userId;
+        private List<UUID> fileIds;
         private Set<String> tags;
 
-        public Builder id(Long id) {
+        public Builder id(UUID id) {
             this.id = id;
             return this;
         }
@@ -72,12 +73,12 @@ public class TaskDTO {
             return this;
         }
 
-        public Builder userId(Long userId) {
+        public Builder userId(UUID userId) {
             this.userId = userId;
             return this;
         }
 
-        public Builder fileIds(List<Long> fileIds) {
+        public Builder fileIds(List<UUID> fileIds) {
             this.fileIds = fileIds;
             return this;
         }

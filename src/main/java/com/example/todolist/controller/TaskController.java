@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -26,13 +27,13 @@ public class TaskController {
     private final TagService tagService;
 
     @GetMapping("/{id}")
-    public TaskDTO get(@PathVariable Long id) {
+    public TaskDTO get(@PathVariable UUID id) {
         return taskService.getTaskById(id);
     }
 
     @PostMapping("/{taskId}/to/{userId}")
-    public void assign(@PathVariable Long taskId,
-                       @PathVariable Long userId) {
+    public void assign(@PathVariable UUID taskId,
+                       @PathVariable UUID userId) {
         taskService.assignTask(taskId, userId);
     }
 
@@ -47,12 +48,12 @@ public class TaskController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable UUID id) {
         taskService.deleteTask(id);
     }
 
-    @PostMapping("/restore/{id}")
-    public void restore(@PathVariable Long id) {
+    @PutMapping("/{id}/restore")
+    public void restore(@PathVariable UUID id) {
         taskService.restoreTask(id);
     }
 

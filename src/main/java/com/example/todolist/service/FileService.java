@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -24,7 +25,7 @@ public class FileService {
     private final FileRepository fileRepository;
     private final TaskRepository taskRepository;
 
-    public void softDelete(Long fileId) {
+    public void softDelete(UUID fileId) {
         FileEntity fileEntity = fileRepository.findByIdAndRemovedIsTrue(fileId)
                 .orElseThrow(NoSuchFileException::new);
         if (fileEntity.getRemoved()) {
@@ -34,14 +35,14 @@ public class FileService {
         fileRepository.save(fileEntity);
     }
 
-    public void restore(Long fileId) {
+    public void restore(UUID fileId) {
         FileEntity fileEntity = fileRepository.findByIdAndRemovedIsTrue(fileId)
                 .orElseThrow(NoSuchFileException::new);
         fileEntity.setRemoved(false);
         fileRepository.save(fileEntity);
     }
 
-    public String getFileName(Long fileId) {
+    public String getFileName(UUID fileId) {
         FileEntity fileEntity = fileRepository.findByIdAndRemovedIsFalse(fileId)
                 .orElseThrow(NoSuchFileException::new);
         return fileEntity.getFileName();
@@ -53,7 +54,7 @@ public class FileService {
         return new FileDTO(savedFile.getFileName(), savedFile.getId());
     }
 
-    public void assignFile(Long fileId, Long taskId) {
+    public void assignFile(UUID fileId, UUID taskId) {
         FileEntity fileEntity = fileRepository.findByIdAndRemovedIsFalse(fileId)
                 .orElseThrow(NoSuchFileException::new);
         TaskEntity taskEntity = taskRepository.findByIdAndRemovedIsFalse(taskId)
@@ -62,17 +63,17 @@ public class FileService {
         fileRepository.save(fileEntity);
     }
 
-    public Resource download(Long id) {
+    public Resource download(UUID id) {
         return new ClassPathResource(FILE_DIRECTORY + getFileName(id));
     }
 
-    public FileDTO upload(MultipartFile file, Long taskId) {
+    public FileDTO upload(MultipartFile file, UUID taskId) {
         String fileName = file.getOriginalFilename();
         String filePath = FILE_DIRECTORY + fileName;
         try {
             file.transferTo(new File(filePath));
         } catch (IOException e) {
-            return new FileDTO(e.getMessage(), -1L);
+            return new FileDTO(e.getMessage(), new UUID(0,0));
         }
         FileDTO fileDto = new FileDTO(fileName, taskId);
         return saveFile(fileDto);

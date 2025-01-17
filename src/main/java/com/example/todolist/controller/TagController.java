@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Set;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -34,7 +35,7 @@ public class TagController {
 
     @PutMapping("/{tagName}/to/{taskId}")
     public TaskDTO assignToTask(@PathVariable String tagName,
-                                @PathVariable Long taskId) {
+                                @PathVariable UUID taskId) {
         return taskService.assignTagToTask(tagName, taskId);
     }
 }

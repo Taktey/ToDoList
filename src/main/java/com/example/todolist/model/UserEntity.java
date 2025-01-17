@@ -17,6 +17,7 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -26,8 +27,8 @@ import java.util.List;
 @Table(name = "person")
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -38,18 +39,18 @@ public class UserEntity {
     @Column(name = "removed")
     private Boolean removed = false;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<TaskEntity> tasks;
 
     public static class Builder {
-        private Long id;
+        private UUID id;
         private String name;
         private LocalDate createdAt;
         private Boolean removed = false;
         private List<TaskEntity> tasks;
 
-        public Builder id(Long id) {
+        public Builder id(UUID id) {
             this.id = id;
             return this;
         }

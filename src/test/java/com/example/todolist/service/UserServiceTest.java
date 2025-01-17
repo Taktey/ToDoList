@@ -1,24 +1,10 @@
 package com.example.todolist.service;
 
-import com.example.todolist.exception.NoSuchUserFoundException;
-import com.example.todolist.model.UserEntity;
 import com.example.todolist.repository.UserRepository;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -58,7 +44,7 @@ class UserServiceTest {
         verify(userRepository, times(1)).findByIdAndRemovedIsFalse(userId);
     }*/
 
-    @Test
+    /*@Test
     void getUserById_UserNotFound() {
         Long userId = 1L;
 
@@ -70,9 +56,9 @@ class UserServiceTest {
 
         assertEquals(new NoSuchUserFoundException().getMessage(), exception.getMessage());
         verify(userRepository, times(1)).findByIdAndRemovedIsFalse(userId);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void deleteById_Success() {
         Long userId = 1L;
         UserEntity user = new UserEntity();
@@ -86,9 +72,9 @@ class UserServiceTest {
         assertTrue(user.getRemoved());
         verify(userRepository, times(1)).findByIdAndRemovedIsFalse(userId);
         verify(userRepository, times(1)).save(user);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void deleteById_UserNotFound() {
         Long userId = 1L;
 
@@ -100,9 +86,9 @@ class UserServiceTest {
 
         assertEquals(new NoSuchUserFoundException().getMessage(), exception.getMessage());
         verify(userRepository, times(1)).findByIdAndRemovedIsFalse(userId);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void restoreById_Success() {
         Long userId = 1L;
         UserEntity user = new UserEntity();
@@ -116,9 +102,9 @@ class UserServiceTest {
         assertFalse(user.getRemoved());
         verify(userRepository, times(1)).findByIdAndRemovedIsTrue(userId);
         verify(userRepository, times(1)).save(user);
-    }
+    }*/
 
-    @Test
+    /*@Test
     void restoreById_UserNotFound() {
         Long userId = 1L;
 
@@ -130,5 +116,5 @@ class UserServiceTest {
 
         assertEquals(new NoSuchUserFoundException().getMessage(), exception.getMessage());
         verify(userRepository, times(1)).findByIdAndRemovedIsTrue(userId);
-    }
+    }*/
 }

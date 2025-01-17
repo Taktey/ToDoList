@@ -2,15 +2,15 @@ databaseChangeLog:
   - logicalFilePath: db/changelog/db.changelog-master.yaml
   - changeSet:
       id: 1
-      author: your_liquibase_username
+      author: your_liquibase_username1
       changes:
         - createTable:
             tableName: task
             columns:
               - column:
                   name: id
-                  type: BIGINT
-                  autoIncrement: true
+                  type: UUID
+                  defaultValueComputed: "uuid_generate_v4()"
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -29,7 +29,7 @@ databaseChangeLog:
                   defaultValue: false
               - column:
                   name: user_id
-                  type: BIGINT
+                  type: UUID
         - addForeignKeyConstraint:
             baseTableName: task
             baseColumnNames: user_id
@@ -40,15 +40,15 @@ databaseChangeLog:
 
   - changeSet:
       id: 2
-      author: your_liquibase_username
+      author: your_liquibase_username2
       changes:
         - createTable:
             tableName: file
             columns:
               - column:
                   name: id
-                  type: BIGINT
-                  autoIncrement: true
+                  type: UUID
+                  defaultValueComputed: "uuid_generate_v4()"
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -63,7 +63,7 @@ databaseChangeLog:
                   defaultValue: false
               - column:
                   name: task_id
-                  type: BIGINT
+                  type: UUID
         - addForeignKeyConstraint:
             baseTableName: file
             baseColumnNames: task_id
@@ -74,15 +74,15 @@ databaseChangeLog:
 
   - changeSet:
       id: 3
-      author: your_liquibase_username
+      author: your_liquibase_username3
       changes:
         - createTable:
             tableName: tag
             columns:
               - column:
                   name: id
-                  type: BIGINT
-                  autoIncrement: true
+                  type: UUID
+                  defaultValueComputed: "uuid_generate_v4()"
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -94,19 +94,19 @@ databaseChangeLog:
 
   - changeSet:
       id: 4
-      author: your_liquibase_username
+      author: your_liquibase_username4
       changes:
         - createTable:
             tableName: task_tag
             columns:
               - column:
                   name: task_id
-                  type: BIGINT
+                  type: UUID
                   constraints:
                     nullable: false
               - column:
                   name: tag_id
-                  type: BIGINT
+                  type: UUID
                   constraints:
                     nullable: false
         - addPrimaryKey:

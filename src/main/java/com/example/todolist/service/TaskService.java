@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -24,24 +25,25 @@ public class TaskService {
     private final UserService userService;
     private final TagService tagService;
     private final TagRepository tagRepository;
+    private final UserMapper userMapper = UserMapper.getInstance();
 
-    public TaskDTO getTaskById(Long taskId) throws NoSuchTaskFoundException {
+    public TaskDTO getTaskById(UUID taskId) throws NoSuchTaskFoundException {
         TaskEntity task = taskRepository.findByIdAndRemovedIsFalse(taskId)
                 .orElseThrow(NoSuchTaskFoundException::new);
         return TaskMapper.getInstance().taskEntityToDto(task);
     }
 
-    public void assignTask(Long taskId, Long userId) throws NoSuchTaskFoundException, NoSuchUserFoundException {
+    public void assignTask(UUID taskId, UUID userId) throws NoSuchTaskFoundException, NoSuchUserFoundException {
         TaskEntity task = taskRepository.findByIdAndRemovedIsFalse(taskId)
                 .orElseThrow(NoSuchTaskFoundException::new);
-        UserEntity userEntity = UserMapper.userDtoToEntity(userService.getUserById(userId));
+        UserEntity userEntity = userMapper.userDtoToEntity(userService.getUserById(userId));
         task.setUser(userEntity);
         taskRepository.save(task);
     }
 
     public TaskDTO createTask(TaskDTO taskDTO) throws NoSuchUserFoundException {
-        UserEntity user = UserMapper.userDtoToEntity(userService.getUserById(taskDTO.getUserId()));
-
+        UserEntity user = userMapper.userDtoToEntity(userService.getUserById(taskDTO.getUserId()));
+        userService.save(user);
         Set<TagEntity> tags = tagService.getOrCreateTags(taskDTO.getTags());
 
         TaskEntity taskEntity = new TaskEntity(
@@ -73,21 +75,21 @@ public class TaskService {
                 .taskEntityToDto(toBeUpdate);
     }
 
-    public void deleteTask(Long taskId) throws NoSuchTaskFoundException {
+    public void deleteTask(UUID taskId) throws NoSuchTaskFoundException {
         TaskEntity task = taskRepository.findByIdAndRemovedIsFalse(taskId)
                 .orElseThrow(NoSuchTaskFoundException::new);
         task.setRemoved(true);
         taskRepository.save(task);
     }
 
-    public void restoreTask(Long taskId) {
+    public void restoreTask(UUID taskId) {
         TaskEntity task = taskRepository.findByIdAndRemovedIsTrue(taskId)
                 .orElseThrow(NoSuchTaskFoundException::new);
         task.setRemoved(false);
         taskRepository.save(task);
     }
 
-    public TaskDTO assignTagToTask(String tagName, Long taskId) {
+    public TaskDTO assignTagToTask(String tagName, UUID taskId) {
         TaskEntity task = taskRepository.findByIdAndRemovedIsFalse(taskId)
                 .orElseThrow(NoSuchTaskFoundException::new);
         TagEntity tag = tagRepository.findByName(tagName)

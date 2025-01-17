@@ -7,9 +7,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,17 +26,17 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserDTO get(@PathVariable Long id) {
+    public UserDTO get(@PathVariable UUID id) {
         return userService.getUserById(id);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable UUID id) {
         userService.deleteById(id);
     }
 
-    @PostMapping("/{id}/restore")
-    public void restore(@PathVariable Long id) {
+    @PutMapping("/{id}/restore")
+    public void restore(@PathVariable UUID id) {
         userService.restoreById(id);
     }
 }

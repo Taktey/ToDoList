@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.UUID;
+
 
 @RequiredArgsConstructor
 @RestController
@@ -25,32 +27,32 @@ public class FileController {
     private final FileService fileService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Resource> download(@PathVariable Long id) {
+    public ResponseEntity<Resource> download(@PathVariable UUID id) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE);
         return new ResponseEntity<>(fileService.download(id), headers, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable UUID id) {
         fileService.softDelete(id);
     }
 
-    @PostMapping("/restore/{id}")
-    public void restore(@PathVariable Long id) {
+    @PostMapping("/{id}/restore")
+    public void restore(@PathVariable UUID id) {
         fileService.restore(id);
     }
 
     @PostMapping("/{fileId}/{taskId}")
-    public void assignToTask(@PathVariable Long fileId,
-                             @PathVariable Long taskId) {
+    public void assignToTask(@PathVariable UUID fileId,
+                             @PathVariable UUID taskId) {
         fileService.assignFile(fileId, taskId);
     }
 
     @PostMapping
     public FileDTO upload(@RequestPart("file") MultipartFile file,
-                          @RequestPart("taskId") String taskId) {
-        return fileService.upload(file, Long.getLong(taskId));
+                          @RequestPart("taskId") UUID taskId) {
+        return fileService.upload(file, taskId);
     }
 }
 

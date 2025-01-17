@@ -6,8 +6,10 @@ import com.example.todolist.model.TagEntity;
 import com.example.todolist.model.TaskEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -25,9 +27,9 @@ public final class TaskMapper {
     }
 
     public final TaskDTO taskEntityToDto(TaskEntity taskEntity) {
-        List<Long> files;
-        if (taskEntity.getFiles().isEmpty()) {
-            files = List.of(0L);
+        List<UUID> files;
+        if (taskEntity.getFiles()==null) {
+            files = new ArrayList<>();
         } else {
             files = taskEntity.getFiles().stream().map(FileEntity::getId).toList();
         }

@@ -10,18 +10,20 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface TagRepository extends JpaRepository<TagEntity, Long> {
+public interface TagRepository extends JpaRepository<TagEntity, UUID> {
 
     @Query("SELECT t FROM TaskEntity t JOIN t.tags tag WHERE tag IN :tags")
     List<TaskEntity> findByTagsIn(@Param("tags") List<TagEntity> tags);
 
-    @Query("SELECT t FROM TaskEntity t " +
-            "JOIN t.tags tag " +
-            "WHERE tag IN :tags " +
-            "GROUP BY t " +
-            "HAVING COUNT(tag) = :tagCount")
+    @Query( """ 
+            SELECT t FROM TaskEntity t 
+            JOIN t.tags tag 
+            WHERE tag IN :tags 
+            GROUP BY t 
+            HAVING COUNT(tag) = :tagCount """)
     List<TaskEntity> findByTagsContainingAll(@Param("tags") List<TagEntity> tags,
                                              @Param("tagCount") long tagCount);
 
