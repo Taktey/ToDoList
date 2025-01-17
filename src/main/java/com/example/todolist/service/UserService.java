@@ -1,41 +1,40 @@
 package com.example.todolist.service;
 
-import com.example.todolist.Exceptions.NoSuchUserFoundException;
-import com.example.todolist.models.UserEntity;
-import com.example.todolist.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.todolist.dto.UserDTO;
+import com.example.todolist.exception.NoSuchUserFoundException;
+import com.example.todolist.mapper.UserMapper;
+import com.example.todolist.model.UserEntity;
+import com.example.todolist.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
-public class UserService extends BaseService{
+public class UserService {
     private final UserRepository userRepository;
 
-    @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserDTO createUser(UserDTO userDTO) {
+        UserEntity toBeCreated = UserMapper.userDtoToEntity(userDTO);
+        return UserMapper.userEntityToDto(userRepository.save(toBeCreated));
     }
 
-    public Long createUser(UserEntity user) {
-        return userRepository.save(user).getId();
-    }
-
-    public UserEntity getUserById(Long id) throws NoSuchUserFoundException{
-        return userRepository.findByIdAndIsRemovedIsFalse(id)
-                .orElseThrow(()->new NoSuchUserFoundException(getUserNotFoundMsg()));
+    public UserDTO getUserById(Long id) throws NoSuchUserFoundException {
+        return UserMapper.userEntityToDto(userRepository.findByIdAndRemovedIsFalse(id)
+                .orElseThrow(NoSuchUserFoundException::new));
     }
 
 
     public void deleteById(Long userId) {
-        UserEntity user = userRepository.findByIdAndIsRemovedIsFalse(userId)
-                .orElseThrow(()->new NoSuchUserFoundException(getUserNotFoundMsg()));
-        user.setIsRemoved(true);
+        UserEntity user = userRepository.findByIdAndRemovedIsFalse(userId)
+                .orElseThrow(NoSuchUserFoundException::new);
+        user.setRemoved(true);
         userRepository.save(user);
     }
 
     public void restoreById(Long userId) {
-        UserEntity user = userRepository.findByIdAndIsRemovedIsTrue(userId)
-                .orElseThrow(()->new NoSuchUserFoundException(getUserNotFoundMsg()));
-        user.setIsRemoved(false);
+        UserEntity user = userRepository.findByIdAndRemovedIsTrue(userId)
+                .orElseThrow(NoSuchUserFoundException::new);
+        user.setRemoved(false);
         userRepository.save(user);
     }
 }

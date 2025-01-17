@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>ToDoList</artifactId>
+    <artifactId>toDoList</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ToDoList</name>
+    <name>toDoList</name>
     <description>ToDoList</description>
     <url/>
     <licenses>
@@ -70,11 +70,14 @@
             <version>5.11.4</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
         </dependency>
     </dependencies>
 

@@ -1,66 +1,64 @@
 package com.example.todolist.service;
 
-import com.example.todolist.Exceptions.NoSuchTagFoundException;
-import com.example.todolist.Exceptions.NoSuchTaskFoundException;
-import com.example.todolist.Exceptions.NoSuchUserFoundException;
-import com.example.todolist.dto.TaskCreateDto;
-import com.example.todolist.dto.TaskDto;
-import com.example.todolist.models.TagEntity;
-import com.example.todolist.models.TaskEntity;
-import com.example.todolist.models.UserEntity;
-import com.example.todolist.repositories.TagRepository;
-import com.example.todolist.repositories.TaskRepository;
-import com.example.todolist.util.TaskMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.todolist.dto.TaskDTO;
+import com.example.todolist.exception.IllegalMethodUsageException;
+import com.example.todolist.exception.NoSuchTagFoundException;
+import com.example.todolist.exception.NoSuchTaskFoundException;
+import com.example.todolist.exception.NoSuchUserFoundException;
+import com.example.todolist.mapper.TaskMapper;
+import com.example.todolist.mapper.UserMapper;
+import com.example.todolist.model.TagEntity;
+import com.example.todolist.model.TaskEntity;
+import com.example.todolist.model.UserEntity;
+import com.example.todolist.repository.TagRepository;
+import com.example.todolist.repository.TaskRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
+@RequiredArgsConstructor
 @Service
-public class TaskService extends BaseService {
+public class TaskService {
     private final TaskRepository taskRepository;
     private final UserService userService;
     private final TagService tagService;
     private final TagRepository tagRepository;
 
-    @Autowired
-    public TaskService(TaskRepository taskRepository, UserService userService, TagService tagService, TagRepository tagRepository) {
-        this.taskRepository = taskRepository;
-        this.userService = userService;
-        this.tagService = tagService;
-        this.tagRepository = tagRepository;
-    }
-
-    public TaskDto getTaskById(Long taskId) throws NoSuchTaskFoundException {
-        TaskEntity task = taskRepository.findByIdAndIsRemovedIsFalse(taskId)
-                .orElseThrow(() -> new NoSuchTaskFoundException(getTaskNotFoundMsg()));
-        return TaskMapper.taskEntityToDto(task);
+    public TaskDTO getTaskById(Long taskId) throws NoSuchTaskFoundException {
+        TaskEntity task = taskRepository.findByIdAndRemovedIsFalse(taskId)
+                .orElseThrow(NoSuchTaskFoundException::new);
+        return TaskMapper.getInstance().taskEntityToDto(task);
     }
 
     public void assignTask(Long taskId, Long userId) throws NoSuchTaskFoundException, NoSuchUserFoundException {
-        TaskEntity task = taskRepository.findByIdAndIsRemovedIsFalse(taskId)
-                .orElseThrow(() -> new NoSuchTaskFoundException(getTaskNotFoundMsg()));
-        UserEntity userEntity = userService.getUserById(userId);
+        TaskEntity task = taskRepository.findByIdAndRemovedIsFalse(taskId)
+                .orElseThrow(NoSuchTaskFoundException::new);
+        UserEntity userEntity = UserMapper.userDtoToEntity(userService.getUserById(userId));
         task.setUser(userEntity);
         taskRepository.save(task);
     }
 
-    public TaskDto createTask(TaskCreateDto taskCreateDto) throws NoSuchUserFoundException {
-        UserEntity user = userService.getUserById(taskCreateDto.getUserId());
+    public TaskDTO createTask(TaskDTO taskDTO) throws NoSuchUserFoundException {
+        UserEntity user = UserMapper.userDtoToEntity(userService.getUserById(taskDTO.getUserId()));
 
-        Set<TagEntity> tags = tagService.getOrCreateTags(taskCreateDto.getTags());
+        Set<TagEntity> tags = tagService.getOrCreateTags(taskDTO.getTags());
 
         TaskEntity taskEntity = new TaskEntity(
-                taskCreateDto.getStartDate(),
-                taskCreateDto.getEndDate(),
-                taskCreateDto.getDescription(),
+                taskDTO.getStartDate(),
+                taskDTO.getEndDate(),
+                taskDTO.getDescription(),
                 user, tags);
-        return TaskMapper.taskEntityToDto(taskRepository.save(taskEntity));
+        return TaskMapper.getInstance()
+                .taskEntityToDto(taskRepository.save(taskEntity));
     }
 
-    public void updateTask(TaskDto taskDto) throws NoSuchTaskFoundException {
-        TaskEntity toBeUpdate = taskRepository.findByIdAndIsRemovedIsFalse(taskDto.getId())
-                .orElseThrow(() -> new NoSuchTaskFoundException(getTaskNotFoundMsg()));
+    public TaskDTO updateTask(TaskDTO taskDto) throws NoSuchTaskFoundException {
+        if (taskDto.getUserId() != null) {
+            throw new IllegalMethodUsageException("To assign task to user use specified method");
+        }
+        TaskEntity toBeUpdate = taskRepository.findByIdAndRemovedIsFalse(taskDto.getId())
+                .orElseThrow(NoSuchTaskFoundException::new);
         if (taskDto.getDescription() != null) {
             toBeUpdate.setDescription(taskDto.getDescription());
         }
@@ -71,32 +69,35 @@ public class TaskService extends BaseService {
             toBeUpdate.setEndDate(taskDto.getEndDate());
         }
         taskRepository.save(toBeUpdate);
+        return TaskMapper.getInstance()
+                .taskEntityToDto(toBeUpdate);
     }
 
     public void deleteTask(Long taskId) throws NoSuchTaskFoundException {
-        TaskEntity task = taskRepository.findByIdAndIsRemovedIsFalse(taskId)
-                .orElseThrow(() -> new NoSuchTaskFoundException(getTaskNotFoundMsg()));
-        task.setIsRemoved(true);
+        TaskEntity task = taskRepository.findByIdAndRemovedIsFalse(taskId)
+                .orElseThrow(NoSuchTaskFoundException::new);
+        task.setRemoved(true);
         taskRepository.save(task);
     }
 
     public void restoreTask(Long taskId) {
-        TaskEntity task = taskRepository.findByIdAndIsRemovedIsTrue(taskId)
-                .orElseThrow(() -> new NoSuchTaskFoundException(getTaskNotFoundMsg()));
-        task.setIsRemoved(false);
+        TaskEntity task = taskRepository.findByIdAndRemovedIsTrue(taskId)
+                .orElseThrow(NoSuchTaskFoundException::new);
+        task.setRemoved(false);
         taskRepository.save(task);
     }
 
-    public TaskDto assignTagToTask(String tagName, Long taskId) {
-        TaskEntity task = taskRepository.findByIdAndIsRemovedIsFalse(taskId)
-                .orElseThrow(()->new NoSuchTaskFoundException(getTaskNotFoundMsg()));
+    public TaskDTO assignTagToTask(String tagName, Long taskId) {
+        TaskEntity task = taskRepository.findByIdAndRemovedIsFalse(taskId)
+                .orElseThrow(NoSuchTaskFoundException::new);
         TagEntity tag = tagRepository.findByName(tagName)
-                .orElseThrow(()->new NoSuchTagFoundException(getTagNotFoundMsg()+tagName));
-        if(!task.getTags().contains(tag)){
+                .orElseThrow(NoSuchTagFoundException::new);
+        if (!task.getTags().contains(tag)) {
             task.getTags().add(tag);
             tag.getTasks().add(task);
         }
-        return TaskMapper.taskEntityToDto(taskRepository.save(task));
+        return TaskMapper.getInstance()
+                .taskEntityToDto(taskRepository.save(task));
 
     }
 }
