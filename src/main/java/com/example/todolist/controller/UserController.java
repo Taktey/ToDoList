@@ -1,5 +1,6 @@
 package com.example.todolist.controller;
 
+import com.example.todolist.dto.TaskDTO;
 import com.example.todolist.dto.UserDTO;
 import com.example.todolist.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Set;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -38,5 +40,10 @@ public class UserController {
     @PutMapping("/{id}/restore")
     public void restore(@PathVariable UUID id) {
         userService.restoreById(id);
+    }
+
+    @GetMapping("/{id}/tasks")
+    public Set<TaskDTO> tasks(@PathVariable UUID id){
+        return  userService.tasksByUserId(id);
     }
 }

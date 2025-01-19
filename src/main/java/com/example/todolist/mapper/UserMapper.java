@@ -5,7 +5,6 @@ import com.example.todolist.dto.UserDTO;
 import com.example.todolist.model.UserEntity;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +21,12 @@ public final class UserMapper {
         }
         return userMapper;
     }
-    public UserEntity userDtoToEntity(UserDTO user) {
+
+    public UserEntity userDtoToEntity(UserDTO userDTO) {
         return UserEntity.builder()
-                .name(user.getName())
-                .createdAt(LocalDate.now())
+                .id(userDTO.getId())
+                .name(userDTO.getName())
+                //             .createdAt(LocalDate.now())
                 .tasks(new ArrayList<>())
                 .build();
     }
