@@ -2,15 +2,17 @@ package com.example.todolist.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Set;
 import java.util.UUID;
 
-@AllArgsConstructor
 @Getter
 @Setter
-public class AssignTasksToUserDTO {
-    private Set<UUID> taskIds;
-    private UUID userId;
+@AllArgsConstructor
+@NoArgsConstructor
+public class TagsToTaskAssignDTO {
+    private Set<String> tagNames;
+    private UUID taskId;
 }

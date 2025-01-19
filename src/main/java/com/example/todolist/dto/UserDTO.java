@@ -17,7 +17,7 @@ public class UserDTO {
     private String name;
     private List<TaskDTO> tasks;
 
-    public UserDTO(String name){
+    public UserDTO(String name) {
         this.name = name;
     }
 }

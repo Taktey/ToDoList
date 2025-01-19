@@ -21,11 +21,12 @@ public final class UserMapper {
         }
         return userMapper;
     }
+
     public UserEntity userDtoToEntity(UserDTO userDTO) {
         return UserEntity.builder()
                 .id(userDTO.getId())
                 .name(userDTO.getName())
-   //             .createdAt(LocalDate.now())
+                //             .createdAt(LocalDate.now())
                 .tasks(new ArrayList<>())
                 .build();
     }

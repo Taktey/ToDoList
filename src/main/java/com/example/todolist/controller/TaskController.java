@@ -1,8 +1,9 @@
 package com.example.todolist.controller;
 
 
-import com.example.todolist.dto.AssignTasksToUserDTO;
+import com.example.todolist.dto.TagsToTaskAssignDTO;
 import com.example.todolist.dto.TaskDTO;
+import com.example.todolist.dto.TasksToUserAssignDTO;
 import com.example.todolist.service.TagService;
 import com.example.todolist.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +33,8 @@ public class TaskController {
         return taskService.getTaskById(id);
     }
 
-    @PostMapping("/assign/users")
-    public void assign(@RequestBody AssignTasksToUserDTO dto) {
+    @PostMapping("/assign/user")
+    public void assign(@RequestBody TasksToUserAssignDTO dto) {
         taskService.assignTasks(dto);
     }
 
@@ -61,4 +62,13 @@ public class TaskController {
     public Set<TaskDTO> getByTags(@RequestParam List<String> tags) {
         return tagService.getTasksHaveTags(tags);
     }
+
+    @PutMapping("/assign/tags")
+    public TaskDTO assignToTask(@RequestBody TagsToTaskAssignDTO dto)
+            /*@PathVariable String tagName,
+                                @PathVariable UUID taskId*/ {
+        return taskService.assignTagsToTask(dto.getTagNames(), dto.getTaskId());
+        //return taskService.assignTagToTask(tagName, taskId);
+    }
+
 }

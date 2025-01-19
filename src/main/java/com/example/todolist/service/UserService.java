@@ -52,8 +52,6 @@ public class UserService {
                     .orElseThrow(() -> new NoSuchUserFoundException("The modified UserEntity does not exist or has been deleted."));
             user.setCreatedAt(userInBase.getCreatedAt());
         }
-
-
         userRepository.save(user);
     }
 

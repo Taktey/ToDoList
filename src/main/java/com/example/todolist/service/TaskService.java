@@ -1,7 +1,7 @@
 package com.example.todolist.service;
 
-import com.example.todolist.dto.AssignTasksToUserDTO;
 import com.example.todolist.dto.TaskDTO;
+import com.example.todolist.dto.TasksToUserAssignDTO;
 import com.example.todolist.exception.IllegalMethodUsageException;
 import com.example.todolist.exception.NoSuchTagFoundException;
 import com.example.todolist.exception.NoSuchTaskFoundException;
@@ -27,6 +27,7 @@ public class TaskService {
     private final TagService tagService;
     private final TagRepository tagRepository;
     private final UserMapper userMapper = UserMapper.getInstance();
+    private final TaskMapper taskMapper = TaskMapper.getInstance();
 
     public TaskDTO getTaskById(UUID taskId) throws NoSuchTaskFoundException {
         TaskEntity task = taskRepository.findByIdAndRemovedIsFalse(taskId)
@@ -34,14 +35,14 @@ public class TaskService {
         return TaskMapper.getInstance().taskEntityToDto(task);
     }
 
-    public void assignTasks(AssignTasksToUserDTO dto) throws NoSuchTaskFoundException, NoSuchUserFoundException {
+    public void assignTasks(TasksToUserAssignDTO dto) throws NoSuchTaskFoundException, NoSuchUserFoundException {
         Set<UUID> taskIds = dto.getTaskIds();
         UserEntity user = userMapper.userDtoToEntity(userService.getUserById(dto.getUserId()));
         taskIds.stream()
                 .map(id -> taskRepository.findByIdAndRemovedIsFalse(id)
                         .orElseThrow(() -> new NoSuchTaskFoundException("task with id: " + id + " not found!")))
-                .peek(task->task.setUser(user))
-                .peek(task->user.getTasks().add(task))
+                .peek(task -> task.setUser(user))
+                .peek(task -> user.getTasks().add(task))
                 .peek(taskRepository::save);
         userService.saveChanges(user);
 
@@ -117,5 +118,18 @@ public class TaskService {
 
     public Set<TaskDTO> tasksByUserId(UUID id) {
         return null;//taskRepository.findByUserAndRemovedIsFalse(id).stream()
+    }
+
+    public TaskDTO assignTagsToTask(Set<String> tagNames, UUID taskId) {
+        Set<TagEntity> tagEntities = tagService.getOrCreateTags(tagNames);
+        TaskEntity task = taskRepository.findByIdAndRemovedIsFalse(taskId)
+                .orElseThrow(NoSuchTaskFoundException::new);
+        for (TagEntity tagEntity : tagEntities) {
+            task.getTags().add(tagEntity);
+        }
+        tagEntities.stream()
+                .peek(tag -> tag.getTasks().add(task))
+                .forEach(tagRepository::save);
+        return taskMapper.taskEntityToDto(taskRepository.save(task));
     }
 }

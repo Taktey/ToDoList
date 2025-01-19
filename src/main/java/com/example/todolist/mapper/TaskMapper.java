@@ -28,7 +28,7 @@ public final class TaskMapper {
 
     public final TaskDTO taskEntityToDto(TaskEntity taskEntity) {
         List<UUID> files;
-        if (taskEntity.getFiles()==null) {
+        if (taskEntity.getFiles() == null) {
             files = new ArrayList<>();
         } else {
             files = taskEntity.getFiles().stream().map(FileEntity::getId).toList();
