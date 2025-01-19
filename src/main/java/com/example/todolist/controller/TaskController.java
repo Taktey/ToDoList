@@ -1,6 +1,7 @@
 package com.example.todolist.controller;
 
 
+import com.example.todolist.dto.AssignTasksToUserDTO;
 import com.example.todolist.dto.TaskDTO;
 import com.example.todolist.service.TagService;
 import com.example.todolist.service.TaskService;
@@ -31,10 +32,9 @@ public class TaskController {
         return taskService.getTaskById(id);
     }
 
-    @PostMapping("/{taskId}/to/{userId}")
-    public void assign(@PathVariable UUID taskId,
-                       @PathVariable UUID userId) {
-        taskService.assignTask(taskId, userId);
+    @PostMapping("/assign/users")
+    public void assign(@RequestBody AssignTasksToUserDTO dto) {
+        taskService.assignTasks(dto);
     }
 
     @PostMapping

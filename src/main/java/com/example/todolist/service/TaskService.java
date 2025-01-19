@@ -1,5 +1,6 @@
 package com.example.todolist.service;
 
+import com.example.todolist.dto.AssignTasksToUserDTO;
 import com.example.todolist.dto.TaskDTO;
 import com.example.todolist.exception.IllegalMethodUsageException;
 import com.example.todolist.exception.NoSuchTagFoundException;
@@ -33,42 +34,54 @@ public class TaskService {
         return TaskMapper.getInstance().taskEntityToDto(task);
     }
 
-    public void assignTask(UUID taskId, UUID userId) throws NoSuchTaskFoundException, NoSuchUserFoundException {
-        TaskEntity task = taskRepository.findByIdAndRemovedIsFalse(taskId)
-                .orElseThrow(NoSuchTaskFoundException::new);
-        UserEntity userEntity = userMapper.userDtoToEntity(userService.getUserById(userId));
-        task.setUser(userEntity);
-        taskRepository.save(task);
+    public void assignTasks(AssignTasksToUserDTO dto) throws NoSuchTaskFoundException, NoSuchUserFoundException {
+        Set<UUID> taskIds = dto.getTaskIds();
+        UserEntity user = userMapper.userDtoToEntity(userService.getUserById(dto.getUserId()));
+        taskIds.stream()
+                .map(id -> taskRepository.findByIdAndRemovedIsFalse(id)
+                        .orElseThrow(() -> new NoSuchTaskFoundException("task with id: " + id + " not found!")))
+                .peek(task->task.setUser(user))
+                .peek(task->user.getTasks().add(task))
+                .peek(taskRepository::save);
+        userService.saveChanges(user);
+
+        /*task.setUser(userEntity);
+        taskRepository.save(task);*/
     }
 
     public TaskDTO createTask(TaskDTO taskDTO) throws NoSuchUserFoundException {
         UserEntity user = userMapper.userDtoToEntity(userService.getUserById(taskDTO.getUserId()));
-        userService.save(user);
         Set<TagEntity> tags = tagService.getOrCreateTags(taskDTO.getTags());
-
         TaskEntity taskEntity = new TaskEntity(
                 taskDTO.getStartDate(),
                 taskDTO.getEndDate(),
                 taskDTO.getDescription(),
                 user, tags);
+        userService.saveChanges(user);
         return TaskMapper.getInstance()
                 .taskEntityToDto(taskRepository.save(taskEntity));
     }
 
-    public TaskDTO updateTask(TaskDTO taskDto) throws NoSuchTaskFoundException {
-        if (taskDto.getUserId() != null) {
+    public TaskDTO updateTask(TaskDTO taskDTO) throws NoSuchTaskFoundException {
+        if (taskDTO.getUserId() != null) {
             throw new IllegalMethodUsageException("To assign task to user use specified method");
         }
-        TaskEntity toBeUpdate = taskRepository.findByIdAndRemovedIsFalse(taskDto.getId())
+        TaskEntity toBeUpdate = taskRepository.findByIdAndRemovedIsFalse(taskDTO.getId())
                 .orElseThrow(NoSuchTaskFoundException::new);
-        if (taskDto.getDescription() != null) {
-            toBeUpdate.setDescription(taskDto.getDescription());
+        if (taskDTO.getDescription() != null) {
+            toBeUpdate.setDescription(taskDTO.getDescription());
         }
-        if (taskDto.getStartDate() != null) {
-            toBeUpdate.setStartDate(taskDto.getStartDate());
+        if (taskDTO.getStartDate() != null) {
+            toBeUpdate.setStartDate(taskDTO.getStartDate());
         }
-        if (taskDto.getEndDate() != null) {
-            toBeUpdate.setEndDate(taskDto.getEndDate());
+        if (taskDTO.getEndDate() != null) {
+            toBeUpdate.setEndDate(taskDTO.getEndDate());
+        }
+        if (taskDTO.getTags() != null) {
+            Set<TagEntity> tags = tagService.getOrCreateTags(taskDTO.getTags());
+            for (TagEntity tag : tags) {
+                toBeUpdate.getTags().add(tag);
+            }
         }
         taskRepository.save(toBeUpdate);
         return TaskMapper.getInstance()
@@ -100,6 +113,9 @@ public class TaskService {
         }
         return TaskMapper.getInstance()
                 .taskEntityToDto(taskRepository.save(task));
+    }
 
+    public Set<TaskDTO> tasksByUserId(UUID id) {
+        return null;//taskRepository.findByUserAndRemovedIsFalse(id).stream()
     }
 }

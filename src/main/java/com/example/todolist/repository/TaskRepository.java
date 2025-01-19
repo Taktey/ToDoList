@@ -5,12 +5,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Repository
 public interface TaskRepository extends JpaRepository<TaskEntity, UUID> {
 
-    Optional<TaskEntity> findByIdAndRemovedIsFalse(UUID taskId);
+    Optional<TaskEntity> findByIdAndRemovedIsFalse(UUID Id);
 
-    Optional<TaskEntity> findByIdAndRemovedIsTrue(UUID taskId);
+    Optional<TaskEntity> findByIdAndRemovedIsTrue(UUID Id);
+
+    Set<TaskEntity> findByUserAndRemovedIsFalse(UUID userId);
 }

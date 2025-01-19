@@ -49,7 +49,9 @@ public class TagService {
     }
 
     public Set<TagEntity> getOrCreateTags(Set<String> tagNames) {
+
         return tagNames.stream()
+                .map(tagName->tagName.toLowerCase())
                 .map(tagName -> tagRepository.findByName(tagName)
                         .orElseGet(() -> saveNewTag(tagName)))
                 .collect(toSet());
