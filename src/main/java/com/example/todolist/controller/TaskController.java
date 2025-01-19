@@ -64,11 +64,8 @@ public class TaskController {
     }
 
     @PutMapping("/assign/tags")
-    public TaskDTO assignToTask(@RequestBody TagsToTaskAssignDTO dto)
-            /*@PathVariable String tagName,
-                                @PathVariable UUID taskId*/ {
+    public TaskDTO assignToTask(@RequestBody TagsToTaskAssignDTO dto) {
         return taskService.assignTagsToTask(dto.getTagNames(), dto.getTaskId());
-        //return taskService.assignTagToTask(tagName, taskId);
     }
 
 }
