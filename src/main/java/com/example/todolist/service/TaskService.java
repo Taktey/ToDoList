@@ -116,10 +116,6 @@ public class TaskService {
                 .taskEntityToDto(taskRepository.save(task));
     }
 
-    public Set<TaskDTO> tasksByUserId(UUID id) {
-        return userService.tasksByUserId(id);
-    }
-
     public TaskDTO assignTagsToTask(Set<String> tagNames, UUID taskId) {
         Set<TagEntity> tagEntities = tagService.getOrCreateTags(tagNames);
         TaskEntity task = taskRepository.findByIdAndRemovedIsFalse(taskId)
