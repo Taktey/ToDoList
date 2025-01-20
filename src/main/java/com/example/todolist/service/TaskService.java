@@ -117,7 +117,7 @@ public class TaskService {
     }
 
     public Set<TaskDTO> tasksByUserId(UUID id) {
-        return null;//taskRepository.findByUserAndRemovedIsFalse(id).stream()
+        return userService.tasksByUserId(id);
     }
 
     public TaskDTO assignTagsToTask(Set<String> tagNames, UUID taskId) {

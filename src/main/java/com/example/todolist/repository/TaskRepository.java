@@ -1,6 +1,7 @@
 package com.example.todolist.repository;
 
 import com.example.todolist.model.TaskEntity;
+import com.example.todolist.model.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,5 +16,5 @@ public interface TaskRepository extends JpaRepository<TaskEntity, UUID> {
 
     Optional<TaskEntity> findByIdAndRemovedIsTrue(UUID Id);
 
-    Set<TaskEntity> findByUserAndRemovedIsFalse(UUID userId);
+    Set<TaskEntity> findByUserAndRemovedIsFalse(UserEntity userEntity);
 }
