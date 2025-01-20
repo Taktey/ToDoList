@@ -33,7 +33,7 @@ public class TaskController {
         return taskService.getTaskById(id);
     }
 
-    @PostMapping("/assign/user")
+    @PutMapping("/assign/user")
     public void assign(@RequestBody TasksToUserAssignDTO dto) {
         taskService.assignTasks(dto);
     }
