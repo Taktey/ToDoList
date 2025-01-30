@@ -1,6 +1,5 @@
 package com.example.todolist.service;
 
-import com.example.todolist.dto.TaskDTO;
 import com.example.todolist.dto.UserDTO;
 import com.example.todolist.exception.NoSuchUserFoundException;
 import com.example.todolist.mapper.UserMapper;
@@ -10,14 +9,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Set;
 import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final TaskService taskService;
     private final UserMapper userMapper = UserMapper.getInstance();
 
     public UserDTO createUser(UserDTO userDTO) {
@@ -53,9 +50,5 @@ public class UserService {
             user.setCreatedAt(userInBase.getCreatedAt());
         }
         userRepository.save(user);
-    }
-
-    public Set<TaskDTO> tasksByUserId(UUID id) {
-        return taskService.tasksByUserId(id);
     }
 }
