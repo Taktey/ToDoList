@@ -30,7 +30,7 @@ public class TaskController {
 
     @GetMapping("/{id}")
     public TaskDTO get(@PathVariable UUID id) {
-        return taskService.getTaskById(id);
+        return taskService.getTaskDTOById(id);
     }
 
     @PutMapping("/assign/user")

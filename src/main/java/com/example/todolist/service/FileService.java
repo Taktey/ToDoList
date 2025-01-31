@@ -9,7 +9,7 @@ import com.example.todolist.model.TaskEntity;
 import com.example.todolist.repository.FileRepository;
 import com.example.todolist.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,12 +21,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 public class FileService {
-    private static final String FILE_DIRECTORY = "files/";
+    private static final String FILE_DIRECTORY = System.getProperty("user.dir") + File.separator + "files" + File.separator;//"files/";
     private final FileRepository fileRepository;
     private final TaskRepository taskRepository;
 
     public void softDelete(UUID fileId) {
-        FileEntity fileEntity = fileRepository.findByIdAndRemovedIsTrue(fileId)
+        FileEntity fileEntity = fileRepository.findById(fileId)
                 .orElseThrow(NoSuchFileException::new);
         if (fileEntity.getRemoved()) {
             throw new AlreadyDeletedException();
@@ -48,12 +48,6 @@ public class FileService {
         return fileEntity.getFileName();
     }
 
-    public FileDTO saveFile(FileDTO fileDto) {
-        FileEntity fileEntity = new FileEntity(fileDto.getFileName());
-        FileEntity savedFile = fileRepository.save(fileEntity);
-        return new FileDTO(savedFile.getFileName(), savedFile.getId());
-    }
-
     public void assignFile(UUID fileId, UUID taskId) {
         FileEntity fileEntity = fileRepository.findByIdAndRemovedIsFalse(fileId)
                 .orElseThrow(NoSuchFileException::new);
@@ -64,7 +58,7 @@ public class FileService {
     }
 
     public Resource download(UUID id) {
-        return new ClassPathResource(FILE_DIRECTORY + getFileName(id));
+        return new FileSystemResource(FILE_DIRECTORY + getFileName(id));
     }
 
     public FileDTO upload(MultipartFile file, UUID taskId) {
@@ -77,5 +71,13 @@ public class FileService {
         }
         FileDTO fileDto = new FileDTO(fileName, taskId);
         return saveFile(fileDto);
+    }
+
+    public FileDTO saveFile(FileDTO fileDto) {
+        FileEntity fileEntity = new FileEntity(fileDto.getFileName());
+        fileEntity.setTask(taskRepository.findByIdAndRemovedIsFalse(fileDto.getTaskId())
+                .orElseThrow(NoSuchTaskFoundException::new));
+        FileEntity savedFile = fileRepository.save(fileEntity);
+        return new FileDTO(savedFile.getId(), savedFile.getFileName(), savedFile.getTask().getId());
     }
 }

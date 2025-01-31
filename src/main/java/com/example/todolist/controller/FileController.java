@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,7 +52,7 @@ public class FileController {
 
     @PostMapping
     public FileDTO upload(@RequestPart("file") MultipartFile file,
-                          @RequestPart("taskId") UUID taskId) {
+                          @RequestParam("taskId") UUID taskId) {
         return fileService.upload(file, taskId);
     }
 }
