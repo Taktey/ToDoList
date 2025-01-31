@@ -30,7 +30,7 @@ public class TaskService {
     private final UserMapper userMapper = UserMapper.getInstance();
     private final TaskMapper taskMapper = TaskMapper.getInstance();
 
-    public TaskDTO getTaskById(UUID taskId) throws NoSuchTaskFoundException {
+    public TaskDTO getTaskDTOById(UUID taskId) throws NoSuchTaskFoundException {
         TaskEntity task = taskRepository.findByIdAndRemovedIsFalse(taskId)
                 .orElseThrow(NoSuchTaskFoundException::new);
         return TaskMapper.getInstance().taskEntityToDto(task);
@@ -46,9 +46,6 @@ public class TaskService {
                 .peek(task -> user.getTasks().add(task))
                 .peek(taskRepository::save);
         userService.saveChanges(user);
-
-        /*task.setUser(userEntity);
-        taskRepository.save(task);*/
     }
 
     public TaskDTO createTask(TaskDTO taskDTO) throws NoSuchUserFoundException {
