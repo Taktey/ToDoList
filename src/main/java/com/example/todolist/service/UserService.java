@@ -23,9 +23,14 @@ public class UserService {
         return userMapper.userEntityToDto(userRepository.save(toBeCreated));
     }
 
-    public UserDTO getUserById(UUID id) throws NoSuchUserFoundException {
+    public UserDTO getUserDTOById(UUID id) throws NoSuchUserFoundException {
         return userMapper.userEntityToDto(userRepository.findByIdAndRemovedIsFalse(id)
                 .orElseThrow(NoSuchUserFoundException::new));
+    }
+
+    public UserEntity getUserEntityById(UUID id) throws NoSuchUserFoundException {
+        return userRepository.findByIdAndRemovedIsFalse(id)
+                .orElseThrow(NoSuchUserFoundException::new);
     }
 
 

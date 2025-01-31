@@ -27,7 +27,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public UserDTO get(@PathVariable UUID id) {
-        return userService.getUserById(id);
+        return userService.getUserDTOById(id);
     }
 
     @DeleteMapping("/{id}")
