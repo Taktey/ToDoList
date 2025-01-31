@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -37,7 +38,7 @@ public class TaskService {
 
     public void assignTasks(TasksToUserAssignDTO dto) throws NoSuchTaskFoundException, NoSuchUserFoundException {
         Set<UUID> taskIds = dto.getTaskIds();
-        UserEntity user = userMapper.userDtoToEntity(userService.getUserById(dto.getUserId()));
+        UserEntity user = userMapper.userDtoToEntity(userService.getUserDTOById(dto.getUserId()));
         taskIds.stream()
                 .map(id -> taskRepository.findByIdAndRemovedIsFalse(id)
                         .orElseThrow(() -> new NoSuchTaskFoundException("task with id: " + id + " not found!")))
@@ -51,7 +52,7 @@ public class TaskService {
     }
 
     public TaskDTO createTask(TaskDTO taskDTO) throws NoSuchUserFoundException {
-        UserEntity user = userMapper.userDtoToEntity(userService.getUserById(taskDTO.getUserId()));
+        UserEntity user = userMapper.userDtoToEntity(userService.getUserDTOById(taskDTO.getUserId()));
         Set<TagEntity> tags = tagService.getOrCreateTags(taskDTO.getTags());
         TaskEntity taskEntity = new TaskEntity(
                 taskDTO.getStartDate(),
@@ -127,5 +128,12 @@ public class TaskService {
                 .peek(tag -> tag.getTasks().add(task))
                 .forEach(tagRepository::save);
         return taskMapper.taskEntityToDto(taskRepository.save(task));
+    }
+
+    public Set<TaskDTO> getTasksByUserId(UUID id) {
+        UserEntity user = userService.getUserEntityById(id);
+        return taskRepository.findByUserAndRemovedIsFalse(user)
+                .stream().map(taskMapper::taskEntityToDto)
+                .collect(Collectors.toSet());
     }
 }

@@ -67,4 +67,9 @@ public class TaskController {
     public TaskDTO assignToTask(@RequestBody TagsToTaskAssignDTO dto) {
         return taskService.assignTagsToTask(dto.getTagNames(), dto.getTaskId());
     }
+
+    @GetMapping("/user/{id}")
+    public Set<TaskDTO> getTasksByUserId(@PathVariable UUID id) {
+        return taskService.getTasksByUserId(id);
+    }
 }
