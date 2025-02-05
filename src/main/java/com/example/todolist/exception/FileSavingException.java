@@ -1,6 +1,5 @@
 package com.example.todolist.exception;
 
-
 public class FileSavingException extends RuntimeException {
     private static final String FAILED_TO_SAVE_FILE_MSG = "Failed to save file!";
 
