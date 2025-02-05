@@ -2,6 +2,7 @@ package com.example.todolist.service;
 
 import com.example.todolist.dto.FileDTO;
 import com.example.todolist.exception.AlreadyDeletedException;
+import com.example.todolist.exception.FileSavingException;
 import com.example.todolist.exception.NoSuchFileException;
 import com.example.todolist.exception.NoSuchTaskFoundException;
 import com.example.todolist.model.FileEntity;
@@ -21,7 +22,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Service
 public class FileService {
-    private static final String FILE_DIRECTORY = System.getProperty("user.dir") + File.separator + "files" + File.separator;//"files/";
+    private static final String FILE_DIRECTORY = System.getProperty("user.dir") + File.separator + "files" + File.separator;
     private final FileRepository fileRepository;
     private final TaskRepository taskRepository;
 
@@ -67,7 +68,7 @@ public class FileService {
         try {
             file.transferTo(new File(filePath));
         } catch (IOException e) {
-            return new FileDTO(e.getMessage(), new UUID(0, 0));
+            throw new FileSavingException();
         }
         FileDTO fileDto = new FileDTO(fileName, taskId);
         return saveFile(fileDto);
