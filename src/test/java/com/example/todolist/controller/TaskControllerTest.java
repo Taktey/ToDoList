@@ -1,130 +1,173 @@
 package com.example.todolist.controller;
 
 import com.example.todolist.dto.TaskDTO;
+import com.example.todolist.dto.TasksToUserAssignDTO;
+import com.example.todolist.service.TagService;
 import com.example.todolist.service.TaskService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.hamcrest.Matchers.containsString;
+import java.util.Set;
+import java.util.UUID;
+
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.anySet;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(TaskController.class)
+@ExtendWith(MockitoExtension.class)
 class TaskControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
 
-    @MockBean
+    @Mock
     private TaskService taskService;
 
-    /*@Test
-    void testGetTask_Success() throws Exception {
-        TaskDto taskDto = new TaskDto(1L, null, null, "тестовое описание",1L,null);
-        when(taskService.getTaskById(1L)).thenReturn(taskDto);
-        mockMvc.perform(get("/task/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.description").value("тестовое описание"));
-        verify(taskService, times(1)).getTaskById(1L);
-    }*/
+    @Mock
+    private TagService tagService;
 
-    /*@Test
-    void testGetTask_NotFound() throws Exception {
-        when(taskService.getTaskById(1L)).thenThrow(new NoSuchTaskFoundException("Задача не найдена"));
+    @InjectMocks
+    private TaskController taskController;
 
-        mockMvc.perform(get("/task/1"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("Задача не найдена"));
+    private MockMvc mockMvc;
+    private UUID taskId;
+    private TaskDTO taskDTO;
 
-        verify(taskService, times(1)).getTaskById(1L);
-    }*/
-
-    /*@Test
-    void testAssignTask_Success() throws Exception {
-        mockMvc.perform(post("/task/1/to/2"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Task with id = 2 reassigned to user id = 2"));
-
-        verify(taskService, times(1)).assignTask(1L, 2L);
-    }*/
-
-    /*@Test
-    void testAssignTask_TaskNotFound() throws Exception {
-        doThrow(new NoSuchTaskFoundException("Задача не найдена")).when(taskService).assignTask(1L, 2L);
-        mockMvc.perform(post("/task/1/to/2"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("Задача не найдена"));
-        verify(taskService, times(1)).assignTask(1L, 2L);
-    }*/
-
-    /*@Test
-    void testAssignTask_UserNotFound() throws Exception {
-        doThrow(new NoSuchUserFoundException("Пользователь не найден")).when(taskService).assignTask(1L, 2L);
-        mockMvc.perform(post("/task/1/to/2"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("Пользователь не найден"));
-        verify(taskService, times(1)).assignTask(1L, 2L);
-    }*/
-
-    /*@Test
-    void testCreateTask_Success() throws Exception {
-        when(taskService.createTask(any(TaskCreateDto.class))).thenReturn(1L);
-        mockMvc.perform(post("/task/create")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"description\":\"Тестовое описание\",\"userId\":2}"))
-                .andExpect(status().isCreated())
-                .andExpect(content().string(containsString("Task successfully created, id = 1")));
-    }*/
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(taskController).build();
+        taskId = UUID.randomUUID();
+        taskDTO = TaskDTO.builder()
+                .id(taskId)
+                .description("Test Task")
+                .userId(UUID.randomUUID())
+                .tags(Set.of()).build();
+    }
 
     @Test
-    void testUpdateTask_Success() throws Exception {
-        mockMvc.perform(put("/task/update")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"id\":1,\"description\":\"Тестовое описание\"}"))
+    @DisplayName("Получение задачи по ID")
+    void getTaskById() throws Exception {
+        when(taskService.getTaskById(taskId)).thenReturn(taskDTO);
+
+        mockMvc.perform(get("/tasks/" + taskId))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Task with id = 1 successfully updated.")));
+                .andExpect(jsonPath("$.id").value(taskId.toString()))
+                .andExpect(jsonPath("$.description").value("Test Task"));
+
+        verify(taskService, times(1)).getTaskById(taskId);
+    }
+
+    @Test
+    @DisplayName("Создание задачи")
+    void createTask() throws Exception {
+        when(taskService.createTask(any(TaskDTO.class))).thenReturn(taskDTO);
+
+        mockMvc.perform(post("/tasks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"description\": \"Test Task\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.description").value("Test Task"));
+
+        verify(taskService, times(1)).createTask(any(TaskDTO.class));
+    }
+
+    @Test
+    @DisplayName("Обновление задачи")
+    void updateTask() throws Exception {
+        when(taskService.updateTask(any(TaskDTO.class))).thenReturn(taskDTO);
+
+        mockMvc.perform(put("/tasks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"id\": \"" + taskId + "\", \"description\": \"Updated Task\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.description").value("Test Task"));
+
         verify(taskService, times(1)).updateTask(any(TaskDTO.class));
     }
 
-/*    @Test
-    void testDeleteTask_Success() throws Exception {
-        mockMvc.perform(delete("/task/delete/1"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Task with id = 1 successfully removed."));
-        verify(taskService, times(1)).deleteTask(1L);
-    }*/
+    @Test
+    @DisplayName("Удаление задачи")
+    void deleteTask() throws Exception {
+        doNothing().when(taskService).deleteTask(taskId);
 
-    /*@Test
-    void testDeleteTask_TaskNotFound() throws Exception {
-        doThrow(new NoSuchTaskFoundException("Задача не найдена")).when(taskService).deleteTask(1L);
-        mockMvc.perform(delete("/task/delete/1"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("Задача не найдена"));
-        verify(taskService, times(1)).deleteTask(1L);
-    }*/
+        mockMvc.perform(delete("/tasks/delete/" + taskId))
+                .andExpect(status().isOk());
 
-    /*@Test
-    void testRestoreTask_Success() throws Exception {
-        mockMvc.perform(put("/task/restore/"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Task with id = 2 successfully restored."));
-        verify(taskService, times(1)).restoreTask(1L);
-    }*/
+        verify(taskService, times(1)).deleteTask(taskId);
+    }
 
-    /*@Test
-    void testRestoreTask_TaskNotFound() throws Exception {
-        doThrow(new NoSuchTaskFoundException("Задача не найдена")).when(taskService).restoreTask(1L);
-        mockMvc.perform(post("/task/restore/1"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("Задача не найдена"));
-        verify(taskService, times(1)).deleteTask(1L);
-    }*/
+    @Test
+    @DisplayName("Восстановление задачи")
+    void restoreTask() throws Exception {
+        doNothing().when(taskService).restoreTask(taskId);
+
+        mockMvc.perform(put("/tasks/" + taskId + "/restore"))
+                .andExpect(status().isOk());
+
+        verify(taskService, times(1)).restoreTask(taskId);
+    }
+
+    @Test
+    @DisplayName("Назначение задачи пользователю")
+    void assignTasksToUser() throws Exception {
+        doNothing().when(taskService).assignTasks(any(TasksToUserAssignDTO.class));
+
+        mockMvc.perform(put("/tasks/assign/user")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"taskIds\": [\"" + taskId + "\"], \"userId\": \"" + UUID.randomUUID() + "\"}"))
+                .andExpect(status().isOk());
+
+        verify(taskService, times(1)).assignTasks(any(TasksToUserAssignDTO.class));
+    }
+
+    @Test
+    @DisplayName("Назначение тега задаче")
+    void assignTagsToTask() throws Exception {
+        when(taskService.assignTagsToTask(anySet(), any(UUID.class))).thenReturn(taskDTO);
+
+        mockMvc.perform(put("/tasks/assign/tags")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"tagNames\": [\"tag1\", \"tag2\"], \"taskId\": \"" + taskId + "\"}"))
+                .andExpect(status().isOk());
+
+        verify(taskService, times(1)).assignTagsToTask(anySet(), any(UUID.class));
+    }
+
+    @Test
+    @DisplayName("Получение задачь по тегам")
+    void getTasksByTags() throws Exception {
+        when(tagService.getTasksHaveTags(anyList())).thenReturn(Set.of(taskDTO));
+
+        mockMvc.perform(get("/tasks").param("tags", "tag1", "tag2"))
+                .andExpect(status().isOk());
+
+        verify(tagService, times(1)).getTasksHaveTags(anyList());
+    }
+
+    @Test
+    @DisplayName("Получение задач по id юзера")
+    void getTasksByUserId() throws Exception {
+        UUID userId = UUID.randomUUID();
+        when(taskService.getTasksByUserId(userId)).thenReturn(Set.of(taskDTO));
+
+        mockMvc.perform(get("/tasks/user/" + userId))
+                .andExpect(status().isOk());
+
+        verify(taskService, times(1)).getTasksByUserId(userId);
+    }
 }

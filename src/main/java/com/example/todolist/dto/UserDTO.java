@@ -15,9 +15,15 @@ import java.util.UUID;
 public class UserDTO {
     private UUID id;
     private String name;
+
     private List<TaskDTO> tasks;
 
     public UserDTO(String name) {
+        this.name = name;
+    }
+
+    public UserDTO(UUID id, String name) {
+        this.id = id;
         this.name = name;
     }
 }
