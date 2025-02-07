@@ -8,7 +8,6 @@ import com.example.todolist.mapper.TaskMapper;
 import com.example.todolist.model.TagEntity;
 import com.example.todolist.model.TaskEntity;
 import com.example.todolist.repository.TagRepository;
-import com.example.todolist.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,6 @@ import static java.util.stream.Collectors.toSet;
 @RequiredArgsConstructor
 @Service
 public class TagService {
-    private final TaskRepository taskRepository;
     private final TagRepository tagRepository;
     private final TaskMapper taskMapper = TaskMapper.getInstance();
 

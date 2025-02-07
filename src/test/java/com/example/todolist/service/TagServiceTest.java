@@ -8,7 +8,6 @@ import com.example.todolist.model.TagEntity;
 import com.example.todolist.model.TaskEntity;
 import com.example.todolist.model.UserEntity;
 import com.example.todolist.repository.TagRepository;
-import com.example.todolist.repository.TaskRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,9 +30,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TagServiceTest {
-    @Mock
-    private TaskRepository taskRepository;
-
     @Mock
     private TagRepository tagRepository;
 
@@ -131,7 +127,7 @@ class TagServiceTest {
                     return savedTag;
                 });
         Set<TagEntity> result = tagService.getOrCreateTags(Set.of(tag1, tag2));
-        assertTrue(result.stream().anyMatch(tag->tag.getName().equals(tag1)));
-        assertTrue(result.stream().anyMatch(tag->tag.getName().equals(tag2)));
+        assertTrue(result.stream().anyMatch(tag -> tag.getName().equals(tag1)));
+        assertTrue(result.stream().anyMatch(tag -> tag.getName().equals(tag2)));
     }
 }
