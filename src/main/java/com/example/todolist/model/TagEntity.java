@@ -32,4 +32,8 @@ public class TagEntity {
     public TagEntity(String tagName) {
         this.name = tagName;
     }
+    public TagEntity(UUID id, String tagName) {
+        this.id = id;
+        this.name = tagName;
+    }
 }

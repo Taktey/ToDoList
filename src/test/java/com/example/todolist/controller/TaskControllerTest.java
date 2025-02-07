@@ -62,14 +62,14 @@ class TaskControllerTest {
     @Test
     @DisplayName("Получение задачи по ID")
     void getTaskById() throws Exception {
-        when(taskService.getTaskById(taskId)).thenReturn(taskDTO);
+        when(taskService.getTaskDTOById(taskId)).thenReturn(taskDTO);
 
         mockMvc.perform(get("/tasks/" + taskId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(taskId.toString()))
                 .andExpect(jsonPath("$.description").value("Test Task"));
 
-        verify(taskService, times(1)).getTaskById(taskId);
+        verify(taskService, times(1)).getTaskDTOById(taskId);
     }
 
     @Test

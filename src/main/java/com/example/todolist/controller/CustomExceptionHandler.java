@@ -7,6 +7,7 @@ import com.example.todolist.exception.NoSuchFileException;
 import com.example.todolist.exception.NoSuchTagFoundException;
 import com.example.todolist.exception.NoSuchTaskFoundException;
 import com.example.todolist.exception.NoSuchUserFoundException;
+import com.example.todolist.exception.TagAlreadyExistsException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +58,12 @@ public class CustomExceptionHandler {
     public ResponseEntity<String> handleFileSavingException(FileSavingException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleTagAlreadyExistsException(TagAlreadyExistsException e) {
+        log.error(e.getMessage(), e);
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
 }

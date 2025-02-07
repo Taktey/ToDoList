@@ -3,6 +3,7 @@ package com.example.todolist.service;
 import com.example.todolist.dto.TagDTO;
 import com.example.todolist.dto.TaskDTO;
 import com.example.todolist.exception.NoSuchTagFoundException;
+import com.example.todolist.exception.TagAlreadyExistsException;
 import com.example.todolist.mapper.TaskMapper;
 import com.example.todolist.model.TagEntity;
 import com.example.todolist.model.TaskEntity;
@@ -45,7 +46,7 @@ public class TagService {
         if (!existsByName(tagDTO.getName())) {
             TagEntity tag = saveNewTag(tagDTO.getName());
             return new TagDTO(tag.getId(), tag.getName());
-        } else throw new RuntimeException("Тег '" + tagDTO.getName().toLowerCase() + "' уже существует");
+        } else throw new TagAlreadyExistsException();
     }
 
     public Set<TagEntity> getOrCreateTags(Set<String> tagNames) {
